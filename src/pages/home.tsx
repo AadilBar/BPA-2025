@@ -14,7 +14,7 @@ function Home() {
                         Your Journey of<br />
                         Healing Starts Here
                     </h1>
-                    <button className="absolute bottom-64 right-32 px-8 py-4 bg-gray-900/45 hover:bg-gray-800/60 text-white font-bold rounded-[8px] border border-gray-500/50 transition-all duration-300">
+                    <button className="absolute bottom-64 right-32 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-full border border-white/30 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg">
                         Enter Safe Space →
                     </button>
                 </div>
@@ -48,7 +48,7 @@ function Home() {
                     <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Do you have a question?</h2>
                     <p className="md:text-2xl text-white mb-16">Nimbus is here to help</p>
                     <div className="flex flex-row justify-center w-full">
-                        <input className="border border-gray-400 bg-gray-700/60 w-[100%] px-4 py-2 rounded-lg text-white" placeholder="Search mental health topics..." />
+                        <input className="border border-white/30 bg-white/10 backdrop-blur-xl w-[100%] px-4 py-2 rounded-full text-white placeholder-white/60 shadow-lg focus:outline-none focus:border-white/50 transition-all duration-300" placeholder="Search mental health topics..." />
                     </div>
                     
                 </div>
@@ -152,7 +152,7 @@ function Home() {
                 <div className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24"> 
                     <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Still need more help?</h2>
                     <p className="text-white font-semibold">Connect with a professional counselor</p>
-                    <button className="mt-8 px-8 py-4 bg-gray-900/45 hover:bg-gray-800/60 text-white font-bold rounded-[8px] border border-gray-500/50 transition-all duration-300">Book an appointmentr with us now
+                    <button className="mt-8 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-full border border-white/30 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg">Book an appointmentr with us now
                     </button>
                 </div>
              </section>

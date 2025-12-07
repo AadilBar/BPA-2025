@@ -6,7 +6,7 @@ interface TestimonialProps {
 
 export default function Testimonial({profileImageUrl, authorName, content}: TestimonialProps) {
     return (
-        <div className=" bg-gray-800/50 flex flex-col rounded-lg px-4 py-6 items-center border border-gray-400">
+        <div className="bg-white/10 backdrop-blur-xl flex flex-col rounded-3xl px-4 py-6 items-center border border-white/30 shadow-2xl shadow-black/20 hover:bg-white/15 transition-all duration-300">
 
             <img src={profileImageUrl} alt={`${authorName}'s profile`} className="w-16 h-16 object-cover rounded-full mt-4" />
 

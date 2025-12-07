@@ -4,6 +4,7 @@ import './index.css'
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
+import Navbar from './components/Navbar';
 
 function App() {
   useEffect(() => {
@@ -25,9 +26,12 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-          <Route path="/" element={<Home />} />
-      </Routes>
+    <>
+      <Navbar />
+      <Routes>
+            <Route path="/" element={<Home />} />
+        </Routes>
+    </>
   )
 }
 
