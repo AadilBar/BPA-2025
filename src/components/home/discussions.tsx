@@ -13,9 +13,9 @@ interface DiscussionsProps {
 export default function Discussions({ category, title, description, profileImageUrl, authorName, timestamp, commentsCount }: DiscussionsProps) {
 
     return (
-        <div className="border border-gray-400 px-4 py-4 rounded-[16px] bg-gray-800/50 flex flex-col"> 
-        <div className="border rounded-[16px] w-fit px-2 py-2 bg-purple-500/40">
-            <h2 className="text-purple-200/90 text-sm font-bold">{category}</h2>
+        <div className="border border-white/30 px-4 py-4 rounded-3xl bg-white/10 backdrop-blur-xl shadow-2xl shadow-black/20 flex flex-col hover:bg-white/15 transition-all duration-300"> 
+        <div className="border border-white/30 rounded-full w-fit px-3 py-1.5 bg-white/20 backdrop-blur-md">
+            <h2 className="text-white/90 text-sm font-bold drop-shadow-md">{category}</h2>
         </div>
 
             <div className="mt-4">
