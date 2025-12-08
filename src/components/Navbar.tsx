@@ -9,10 +9,14 @@ function Navbar() {
     const location = useLocation();
 
     return (
-        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[98%] max-w-6xl flex flex-col">
+        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[98%] max-w-7xl flex flex-col">
             <div className="flex items-center gap-3">
                 {/* Main navbar container */}
-                <div className={`transition-all duration-500 ease-out ${isSearchOpen ? 'flex-1' : 'flex-1'} bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-6 sm:px-8 shadow-2xl shadow-black/20`}>
+                <div className={`relative overflow-hidden transition-all duration-500 ease-out ${isSearchOpen ? 'flex-1' : 'flex-1'} bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-6 sm:px-8 shadow-2xl shadow-black/20`}>
+                    <div
+                        className="pointer-events-none absolute inset-[-12px] opacity-60 mix-blend-screen blur-2xl bg-[conic-gradient(at_30%_30%,#ffffff80,#7ed6ff55,#ffffff30,#abc6ff70,#ffffff80)] animate-[spin_18s_linear_infinite]"
+                        aria-hidden
+                    />
                     <div className={`flex items-center h-14 ${isSearchOpen ? 'justify-between' : 'justify-between'}`}>
                         {/* Logo */}
                         {!isSearchOpen && (
@@ -25,7 +29,7 @@ function Navbar() {
 
                         {/* Desktop Navigation */}
                         {!isSearchOpen && (
-                            <div className="hidden md:flex md:flex-1 justify-end items-center space-x-8 nav-fade-in">
+                            <div className="hidden md:flex md:flex-1 justify-end items-center space-x-6 nav-fade-in">
                                 <Link to="/" className={`nav-link font-bold transition-all duration-200 drop-shadow-md ${location.pathname === '/' ? 'text-white' : 'text-white/90'}`}>
                                     Home
                                 </Link>
@@ -41,8 +45,11 @@ function Navbar() {
                                 <Link to="/testimonials" className={`nav-link font-bold transition-all duration-200 drop-shadow-md ${location.pathname === '/testimonials' ? 'text-white' : 'text-white/90'}`}>
                                     Testimonials
                                 </Link>
-                                <Link to="/help" className="px-5 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold rounded-full transition-all duration-300 border border-white/30 shadow-lg">
+                                <Link to="/help" className={`nav-link font-bold transition-all duration-200 drop-shadow-md ${location.pathname === '/help' ? 'text-white' : 'text-white/90'}`}>
                                     Get Help
+                                </Link>
+                                <Link to="/signin" className="px-5 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold rounded-full transition-all duration-300 border border-white/30 shadow-lg">
+                                    Sign In
                                 </Link>
                             </div>
                         )}
@@ -104,8 +111,12 @@ function Navbar() {
                 {!isSearchOpen && (
                     <button
                         onClick={() => setIsSearchOpen(true)}
-                        className="hidden md:flex bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-3 shadow-2xl shadow-black/20 text-white/90 hover:text-white transition-all duration-300 drop-shadow-md hover:bg-white/20 items-center justify-center h-14 w-14 flex-shrink-0 hover:scale-110"
+                        className="relative overflow-hidden hidden md:flex bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-3 shadow-2xl shadow-black/20 text-white/90 hover:text-white transition-all duration-300 drop-shadow-md hover:bg-white/20 items-center justify-center h-14 w-14 flex-shrink-0 hover:scale-110"
                     >
+                        <span
+                            className="pointer-events-none absolute inset-[-10px] opacity-60 mix-blend-screen blur-xl bg-[conic-gradient(at_40%_40%,#ffffff80,#7ed6ff55,#ffffff30,#abc6ff70,#ffffff80)] animate-[spin_14s_linear_infinite]"
+                            aria-hidden
+                        />
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
@@ -154,10 +165,17 @@ function Navbar() {
                         </Link>
                         <Link
                             to="/help"
-                            className="w-full mt-2 px-6 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold rounded-full transition-all duration-300 border border-white/30 shadow-lg block text-center"
+                            className={`block px-3 py-2 font-bold rounded-2xl transition-all duration-200 ${location.pathname === '/help' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Get Help
+                        </Link>
+                        <Link
+                            to="/signin"
+                            className="w-full mt-2 px-6 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold rounded-full transition-all duration-300 border border-white/30 shadow-lg block text-center"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Sign In
                         </Link>
                     </div>
                 </div>
