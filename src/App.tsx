@@ -4,6 +4,9 @@ import Help from './pages/help'
 import Counseling from './pages/counseling'
 import Forum from './pages/forum'
 import Testimonials from './pages/testimonials'
+import SignIn from './pages/signin'
+import AccountSetup from './pages/accountSetup'
+import Profile from './pages/profile'
 import { Route, Routes, HashRouter } from 'react-router-dom'; 
 import './index.css'
 import { useEffect } from 'react';
@@ -42,6 +45,9 @@ function App() {
             <Route path="/counseling" element={<Counseling />} />
             <Route path="/forum" element={<Forum />} />
             <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/accountsetup" element={<AccountSetup />} />
+            <Route path="/profile" element={<Profile />} />
         </Routes>
     </>
   )
