@@ -4,7 +4,12 @@ import Help from './pages/help'
 import Counseling from './pages/counseling'
 import Forum from './pages/forum'
 import Testimonials from './pages/testimonials'
-import { Route, Routes, HashRouter } from 'react-router-dom'; 
+import SignIn from './pages/signin'
+import AccountSetup from './pages/accountSetup'
+import Profile from './pages/profile'
+import Nimbus from './pages/nimbus'
+import Resources from './pages/resources'
+import { Route, Routes, HashRouter, useLocation } from 'react-router-dom'; 
 import './index.css'
 import { useEffect } from 'react';
 import Lenis from 'lenis';
@@ -13,6 +18,8 @@ import Navbar from './components/Navbar';
 import MentalHealthPopup from './components/MentalHealthPopup';
 
 function App() {
+  const location = useLocation();
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -42,6 +49,11 @@ function App() {
             <Route path="/counseling" element={<Counseling />} />
             <Route path="/forum" element={<Forum />} />
             <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/accountsetup" element={<AccountSetup />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/nimbus" element={<Nimbus />} />
+            <Route path="/resources" element={<Resources />} />
         </Routes>
     </>
   )
