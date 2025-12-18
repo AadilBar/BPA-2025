@@ -2,7 +2,7 @@ import { Search, Plus, Pin, MessageCircle, ThumbsUp, TrendingUp, Users, MessageS
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase/firebase';
-import { collection, query, getDocs, orderBy, where } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 
 interface Discussion {
   id: string;
@@ -28,6 +28,7 @@ export default function Forum() {
   const [sortBy, setSortBy] = useState('Most Recent');
   const [timeFilter, setTimeFilter] = useState('All Time');
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch discussions from Firebase
@@ -39,26 +40,9 @@ export default function Forum() {
         const q = query(forumRef, orderBy('createdAt', 'desc'));
         const querySnapshot = await getDocs(q);
         
-        // Get unique user IDs
-        const userIds = [...new Set(querySnapshot.docs.map(doc => doc.data().userId))];
-        
-        // Fetch all user profiles
-        const userProfiles: { [key: string]: any } = {};
-        for (const userId of userIds) {
-          if (userId) {
-            const usersRef = collection(db, 'Users');
-            const userQuery = query(usersRef, where('userId', '==', userId));
-            const userSnapshot = await getDocs(userQuery);
-            if (!userSnapshot.empty) {
-              userProfiles[userId] = userSnapshot.docs[0].data();
-            }
-          }
-        }
-        
-        // Map discussions with user data
+        // Map discussions using stored display info (no Users collection access needed)
         const discussionsData: Discussion[] = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          const userProfile = userProfiles[data.userId] || {};
           
           // Calculate time ago
           const createdAt = data.createdAt?.toDate();
@@ -69,8 +53,8 @@ export default function Forum() {
             title: data.title,
             content: data.content,
             userId: data.userId,
-            author: userProfile.displayName || userProfile.email || 'Anonymous',
-            authorAvatar: userProfile.profileImageUrl || '',
+            author: data.authorDisplayName || 'Anonymous',
+            authorAvatar: data.authorProfilePic || '',
             timeAgo,
             replies: data.replies || 0,
             likes: data.likes || 0,
@@ -82,6 +66,7 @@ export default function Forum() {
           };
         });
         
+        setAllDiscussions(discussionsData);
         setDiscussions(discussionsData);
       } catch (error) {
         console.error('Error fetching discussions:', error);
@@ -92,6 +77,70 @@ export default function Forum() {
 
     fetchDiscussions();
   }, []);
+
+  // Filter and sort discussions
+  useEffect(() => {
+    let filtered = [...allDiscussions];
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(d => 
+        d.title.toLowerCase().includes(query) ||
+        d.content.toLowerCase().includes(query) ||
+        d.tags?.some(tag => tag.toLowerCase().includes(query)) ||
+        d.author.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply category filter
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(d => d.category === selectedCategory);
+    }
+
+    // Apply time filter
+    if (timeFilter !== 'All Time' && filtered.length > 0) {
+      const now = new Date();
+      const filterDate = new Date();
+      
+      switch (timeFilter) {
+        case 'Today':
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'This Week':
+          filterDate.setDate(now.getDate() - 7);
+          break;
+        case 'This Month':
+          filterDate.setMonth(now.getMonth() - 1);
+          break;
+      }
+      
+      filtered = filtered.filter(d => {
+        const createdAt = d.createdAt?.toDate();
+        return createdAt && createdAt >= filterDate;
+      });
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'Most Popular':
+        filtered.sort((a, b) => b.likes - a.likes);
+        break;
+      case 'Most Replies':
+        filtered.sort((a, b) => b.replies - a.replies);
+        break;
+      case 'Most Recent':
+      default:
+        filtered.sort((a, b) => {
+          const dateA = a.createdAt?.toDate() || new Date(0);
+          const dateB = b.createdAt?.toDate() || new Date(0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+    }
+
+    setDiscussions(filtered);
+  }, [searchQuery, selectedCategory, sortBy, timeFilter, allDiscussions]);
 
   // Helper function to calculate time ago
   const getTimeAgo = (date: Date): string => {
@@ -116,7 +165,7 @@ export default function Forum() {
     return 'just now';
   };
 
-  const categories = ['Uplifty', 'Depression', 'Relationships', 'Recovery', 'Self-Care'];
+  const categories = ['Uplifty', 'Depression', 'Relationships', 'Recovery', 'Self-Care', 'Informational'];
   const trendingTopics = [
     { title: 'How therapy changed my perspective', category: 'Recovery', replies: 156 },
     { title: 'Meditation apps that actually work', category: 'Self-Care', replies: 243 },
@@ -163,11 +212,16 @@ export default function Forum() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md"
+                className="bg-white/10 border border-white/20 rounded-full px-4 pr-10 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center'
+                }}
               >
-                <option>Most Recent</option>
-                <option>Most Popular</option>
-                <option>Most Replies</option>
+                <option className="bg-[#6A1E55] text-white">Most Recent</option>
+                <option className="bg-[#6A1E55] text-white">Most Popular</option>
+                <option className="bg-[#6A1E55] text-white">Most Replies</option>
               </select>
             </div>
 
@@ -176,10 +230,15 @@ export default function Forum() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md"
+                className="bg-white/10 border border-white/20 rounded-full px-4 pr-10 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center'
+                }}
               >
-                <option>All</option>
-                {categories.map(cat => <option key={cat}>{cat}</option>)}
+                <option className="bg-[#6A1E55] text-white">All</option>
+                {categories.map(cat => <option key={cat} className="bg-[#6A1E55] text-white">{cat}</option>)}
               </select>
             </div>
 
@@ -188,27 +247,19 @@ export default function Forum() {
               <select
                 value={timeFilter}
                 onChange={(e) => setTimeFilter(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md"
+                className="bg-white/10 border border-white/20 rounded-full px-4 pr-10 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center'
+                }}
               >
-                <option>All Time</option>
-                <option>Today</option>
-                <option>This Week</option>
-                <option>This Month</option>
+                <option className="bg-[#6A1E55] text-white">All Time</option>
+                <option className="bg-[#6A1E55] text-white">Today</option>
+                <option className="bg-[#6A1E55] text-white">This Week</option>
+                <option className="bg-[#6A1E55] text-white">This Month</option>
               </select>
             </div>
-          </div>
-
-          {/* Category Tags */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {categories.map(category => (
-              <button
-                key={category}
-                className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white/90 text-sm font-medium rounded-full px-4 py-2 transition-all duration-200 border border-white/20"
-              >
-                <span className="mr-2">💭</span>
-                {category}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -227,6 +278,7 @@ export default function Forum() {
               discussions.map(discussion => (
               <div
                 key={discussion.id}
+                onClick={() => navigate(`/forum/${discussion.id}`)}
                 className={`bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10 hover:bg-white/15 transition-all duration-300 cursor-pointer ${discussion.isPinned ? 'border-yellow-500/40' : ''}`}
               >
                 {discussion.isPinned && (
@@ -279,10 +331,6 @@ export default function Forum() {
                     ))}
                   </div>
                 )}
-
-                <button className="mt-4 text-sm text-white/60 hover:text-white transition-colors">
-                  View replies →
-                </button>
               </div>
             )))}
 
@@ -399,6 +447,17 @@ export default function Forum() {
             </div>
           </div>
         </div>
+
+        {/* Help Footer Section */}
+        <section className="mt-16 mb-8">
+          <div className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24">
+            <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Still need more help?</h2>
+            <p className="text-white font-semibold">Connect with a professional counselor</p>
+            <button className="mt-8 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-full border border-white/30 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg">
+              Book an appointment with us now
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   );
