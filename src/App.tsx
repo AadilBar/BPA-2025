@@ -8,8 +8,10 @@ import Testimonials from './pages/testimonials'
 import SignIn from './pages/signin'
 import AccountSetup from './pages/accountSetup'
 import Profile from './pages/profile'
-import Nimbus from './pages/nimbus'
+import Blog from './pages/blog'
 import Resources from './pages/resources'
+import AddBlogPost from './pages/AddBlogPost';
+import BlogPostDetail from './pages/BlogPostDetail';
 import { Route, Routes, HashRouter } from 'react-router-dom'; 
 import './index.css'
 import { useEffect } from 'react';
@@ -53,8 +55,10 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/accountsetup" element={<AccountSetup />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/nimbus" element={<Nimbus />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/resources" element={<Resources />} />
+            <Route path="/add-blog" element={<AddBlogPost />} />
+            <Route path="/blog/:postId" element={<BlogPostDetail />} />
         </Routes>
     </>
   )
