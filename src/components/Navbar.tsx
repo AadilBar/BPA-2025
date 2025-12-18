@@ -110,14 +110,14 @@ function Navbar() {
                     <div className="relative flex items-center gap-1">
                         {/* Left pages */}
                         <Link 
-                            to="/nimbus" 
+                            to="/blog" 
                             className={`px-4 py-1.5 rounded-full font-semibold text-sm transition-all duration-200 ${
-                                location.pathname === '/nimbus' 
+                                location.pathname === '/blog' 
                                     ? 'bg-white/25 text-white shadow-md' 
                                     : 'text-white/80 hover:text-white hover:bg-white/10'
                             }`}
                         >
-                            Nimbus
+                            Blogs
                         </Link>
                         <Link 
                             to="/counseling" 
