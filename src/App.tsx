@@ -19,6 +19,8 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
 
@@ -61,6 +63,7 @@ function App() {
             <Route path="/add-blog" element={<AddBlogPost />} />
             <Route path="/blog/:postId" element={<BlogPostDetail />} />
         </Routes>
+      <Footer />
     </>
   )
 }
@@ -68,6 +71,7 @@ function App() {
 export default function AppWrapper() {
   return (
     <HashRouter>
+      <ScrollToTop />
       <App />
     </HashRouter>
   );
