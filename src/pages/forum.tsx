@@ -1,8 +1,9 @@
-import { Search, Plus, Pin, MessageCircle, ThumbsUp, TrendingUp, Users, MessageSquare, Heart } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Search, Plus, Pin, MessageCircle, ThumbsUp, TrendingUp, Eye } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { getUserProfile } from '../utils/profileHelpers';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase/firebase';
-import { collection, query, getDocs, orderBy, where } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 
 interface Discussion {
   id: string;
@@ -18,6 +19,7 @@ interface Discussion {
   isPinned?: boolean;
   tags?: string[];
   triggers?: string[];
+  views: number;
   createdAt: any;
 }
 
@@ -28,7 +30,11 @@ export default function Forum() {
   const [sortBy, setSortBy] = useState('Most Recent');
   const [timeFilter, setTimeFilter] = useState('All Time');
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState<number>(4);
+  const [hideSensitive, setHideSensitive] = useState<boolean>(false);
+  const [userTriggers, setUserTriggers] = useState<string[]>([]);
 
   // Fetch discussions from Firebase
   useEffect(() => {
@@ -39,26 +45,9 @@ export default function Forum() {
         const q = query(forumRef, orderBy('createdAt', 'desc'));
         const querySnapshot = await getDocs(q);
         
-        // Get unique user IDs
-        const userIds = [...new Set(querySnapshot.docs.map(doc => doc.data().userId))];
-        
-        // Fetch all user profiles
-        const userProfiles: { [key: string]: any } = {};
-        for (const userId of userIds) {
-          if (userId) {
-            const usersRef = collection(db, 'Users');
-            const userQuery = query(usersRef, where('userId', '==', userId));
-            const userSnapshot = await getDocs(userQuery);
-            if (!userSnapshot.empty) {
-              userProfiles[userId] = userSnapshot.docs[0].data();
-            }
-          }
-        }
-        
-        // Map discussions with user data
+        // Map discussions using stored display info (no Users collection access needed)
         const discussionsData: Discussion[] = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          const userProfile = userProfiles[data.userId] || {};
           
           // Calculate time ago
           const createdAt = data.createdAt?.toDate();
@@ -69,8 +58,8 @@ export default function Forum() {
             title: data.title,
             content: data.content,
             userId: data.userId,
-            author: userProfile.displayName || userProfile.email || 'Anonymous',
-            authorAvatar: userProfile.profileImageUrl || '',
+            author: data.authorDisplayName || 'Anonymous',
+            authorAvatar: data.authorProfilePic || '',
             timeAgo,
             replies: data.replies || 0,
             likes: data.likes || 0,
@@ -78,10 +67,12 @@ export default function Forum() {
             isPinned: data.isPinned || false,
             tags: data.tags || [],
             triggers: data.triggers || [],
+            views: data.views || 0,
             createdAt: data.createdAt
           };
         });
         
+        setAllDiscussions(discussionsData);
         setDiscussions(discussionsData);
       } catch (error) {
         console.error('Error fetching discussions:', error);
@@ -91,7 +82,105 @@ export default function Forum() {
     };
 
     fetchDiscussions();
+    // load current user's profile triggers for sensitive filtering
+    const loadProfile = async () => {
+      try {
+        const profile = await getUserProfile();
+        if (profile && profile.triggers) {
+          setUserTriggers(profile.triggers.map((t: string) => t.toString()));
+        }
+      } catch (err) {
+        console.warn('Failed to load user profile for triggers:', err);
+      }
+    };
+
+    loadProfile();
   }, []);
+
+  // Filter and sort discussions
+  useEffect(() => {
+    let filtered = [...allDiscussions];
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(d => {
+        const titleMatch = d.title?.toLowerCase().includes(q);
+        // search the main content/body and also common alternate field names just in case
+        const contentFields = [d.content, (d as any).body, (d as any).description, (d as any).post];
+        const contentMatch = contentFields.some(field => typeof field === 'string' && field.toLowerCase().includes(q));
+        const tagsMatch = d.tags?.some(tag => tag.toLowerCase().includes(q));
+        const authorMatch = d.author?.toLowerCase().includes(q);
+        return Boolean(titleMatch || contentMatch || tagsMatch || authorMatch);
+      });
+    }
+
+    // Apply category filter
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(d => d.category === selectedCategory);
+    }
+
+    // Apply time filter
+    if (timeFilter !== 'All Time' && filtered.length > 0) {
+      const now = new Date();
+      const filterDate = new Date();
+      
+      switch (timeFilter) {
+        case 'Today':
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'This Week':
+          filterDate.setDate(now.getDate() - 7);
+          break;
+        case 'This Month':
+          filterDate.setMonth(now.getMonth() - 1);
+          break;
+      }
+      
+      filtered = filtered.filter(d => {
+        const createdAt = d.createdAt?.toDate();
+        return createdAt && createdAt >= filterDate;
+      });
+    }
+
+    // Apply sensitive content filter (hide posts that contain triggers the user selected)
+    if (hideSensitive && userTriggers && userTriggers.length > 0) {
+      const userTriggersLower = userTriggers.map(t => t.toLowerCase());
+      filtered = filtered.filter(d => {
+        const postTriggers = (d.triggers || []).map(t => t.toLowerCase());
+        return !postTriggers.some(pt => userTriggersLower.includes(pt));
+      });
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'Most Popular':
+        filtered.sort((a, b) => b.likes - a.likes);
+        break;
+      case 'Most Replies':
+        filtered.sort((a, b) => b.replies - a.replies);
+        break;
+      case 'Most Recent':
+      default:
+        filtered.sort((a, b) => {
+          const dateA = a.createdAt?.toDate() || new Date(0);
+          const dateB = b.createdAt?.toDate() || new Date(0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+    }
+
+    setDiscussions(filtered);
+  }, [searchQuery, selectedCategory, sortBy, timeFilter, allDiscussions, hideSensitive, userTriggers]);
+
+  // Reset visible count when filters/search/all discussions change
+  useEffect(() => {
+    setVisibleCount(4);
+  }, [searchQuery, selectedCategory, sortBy, timeFilter, allDiscussions]);
+
+  const loadMore = () => {
+    setVisibleCount((prev) => Math.min(prev + 4, discussions.length));
+  };
 
   // Helper function to calculate time ago
   const getTimeAgo = (date: Date): string => {
@@ -116,12 +205,19 @@ export default function Forum() {
     return 'just now';
   };
 
-  const categories = ['Uplifty', 'Depression', 'Relationships', 'Recovery', 'Self-Care'];
-  const trendingTopics = [
-    { title: 'How therapy changed my perspective', category: 'Recovery', replies: 156 },
-    { title: 'Meditation apps that actually work', category: 'Self-Care', replies: 243 },
-    { title: 'Setting boundaries with family', category: 'Relationships', replies: 89 }
-  ];
+  const categories = ['Uplifty', 'Depression', 'Relationships', 'Recovery', 'Self-Care', 'Informational'];
+  // Compute trending posts from all discussions (weighted by replies and likes)
+  const trendingPosts = useMemo(() => {
+    if (!allDiscussions || allDiscussions.length === 0) return [] as Discussion[];
+
+    // Score formula: replies * 2 + likes + 3 * log10(views + 1)
+    // Log-scaling views prevents very high view counts from dominating the score.
+    const score = (d: Discussion) => (d.replies || 0) * 2 + (d.likes || 0) + 3 * Math.log10((d.views || 0) + 1);
+
+    return [...allDiscussions]
+      .sort((a, b) => score(b) - score(a))
+      .slice(0, 5);
+  }, [allDiscussions]);
 
   return (
     <div className="min-h-screen pt-24 px-4 pb-12" style={{
@@ -163,11 +259,16 @@ export default function Forum() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md"
+                className="bg-white/10 border border-white/20 rounded-full px-4 pr-10 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center'
+                }}
               >
-                <option>Most Recent</option>
-                <option>Most Popular</option>
-                <option>Most Replies</option>
+                <option className="bg-[#6A1E55] text-white">Most Recent</option>
+                <option className="bg-[#6A1E55] text-white">Most Popular</option>
+                <option className="bg-[#6A1E55] text-white">Most Replies</option>
               </select>
             </div>
 
@@ -176,10 +277,15 @@ export default function Forum() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md"
+                className="bg-white/10 border border-white/20 rounded-full px-4 pr-10 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center'
+                }}
               >
-                <option>All</option>
-                {categories.map(cat => <option key={cat}>{cat}</option>)}
+                <option className="bg-[#6A1E55] text-white">All</option>
+                {categories.map(cat => <option key={cat} className="bg-[#6A1E55] text-white">{cat}</option>)}
               </select>
             </div>
 
@@ -188,27 +294,30 @@ export default function Forum() {
               <select
                 value={timeFilter}
                 onChange={(e) => setTimeFilter(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md"
+                className="bg-white/10 border border-white/20 rounded-full px-4 pr-10 py-2 text-white text-sm focus:outline-none focus:border-white/30 cursor-pointer backdrop-blur-md appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center'
+                }}
               >
-                <option>All Time</option>
-                <option>Today</option>
-                <option>This Week</option>
-                <option>This Month</option>
+                <option className="bg-[#6A1E55] text-white">All Time</option>
+                <option className="bg-[#6A1E55] text-white">Today</option>
+                <option className="bg-[#6A1E55] text-white">This Week</option>
+                <option className="bg-[#6A1E55] text-white">This Month</option>
               </select>
             </div>
-          </div>
-
-          {/* Category Tags */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {categories.map(category => (
-              <button
-                key={category}
-                className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white/90 text-sm font-medium rounded-full px-4 py-2 transition-all duration-200 border border-white/20"
-              >
-                <span className="mr-2">💭</span>
-                {category}
-              </button>
-            ))}
+            <div className="flex items-center gap-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hideSensitive}
+                  onChange={() => setHideSensitive(prev => !prev)}
+                  className="w-4 h-4 rounded border-white/20 bg-white/5 focus:ring-0"
+                />
+                <span className="text-white/70 text-sm">Hide posts matching my triggers</span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -224,9 +333,10 @@ export default function Forum() {
                 <p>No discussions yet. Be the first to start one!</p>
               </div>
             ) : (
-              discussions.map(discussion => (
+              discussions.slice(0, visibleCount).map(discussion => (
               <div
                 key={discussion.id}
+                onClick={() => navigate(`/forum/${discussion.id}`)}
                 className={`bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10 hover:bg-white/15 transition-all duration-300 cursor-pointer ${discussion.isPinned ? 'border-yellow-500/40' : ''}`}
               >
                 {discussion.isPinned && (
@@ -267,6 +377,10 @@ export default function Forum() {
                       <MessageCircle size={16} />
                       <span className="text-sm">{discussion.replies}</span>
                     </div>
+                    <div className="flex items-center gap-1 text-white/70">
+                      <Eye size={16} />
+                      <span className="text-sm">{discussion.views}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -279,16 +393,12 @@ export default function Forum() {
                     ))}
                   </div>
                 )}
-
-                <button className="mt-4 text-sm text-white/60 hover:text-white transition-colors">
-                  View replies →
-                </button>
               </div>
             )))}
 
-            {!loading && discussions.length > 0 && (
-              <button className="w-full bg-white/5 hover:bg-white/10 backdrop-blur-md text-white/70 font-medium rounded-full py-3 transition-all duration-200 border border-white/10">
-                Loading more discussions...
+            {!loading && discussions.length > 0 && visibleCount < discussions.length && (
+              <button onClick={loadMore} className="w-full bg-white/5 hover:bg-white/10 backdrop-blur-md text-white/70 font-medium rounded-full py-3 transition-all duration-200 border border-white/10">
+                View more discussions
               </button>
             )}
           </div>
@@ -328,77 +438,39 @@ export default function Forum() {
                 Trending Discussions
               </h3>
               <div className="space-y-3">
-                {trendingTopics.map((topic, idx) => (
-                  <div key={idx} className="hover:bg-white/5 p-3 rounded-full transition-all cursor-pointer">
-                    <h4 className="text-white/90 text-sm font-semibold mb-1">{topic.title}</h4>
-                    <div className="flex items-center gap-2 text-white/50 text-xs">
-                      <span>{topic.category}</span>
-                      <span>•</span>
-                      <span>{topic.replies} replies</span>
+                {trendingPosts.length === 0 ? (
+                  <div className="text-white/60 text-sm">No trending discussions yet.</div>
+                ) : (
+                  trendingPosts.map((post, idx) => (
+                    <div key={post.id || idx} onClick={() => navigate(`/forum/${post.id}`)} className="hover:bg-white/5 p-3 rounded-full transition-all cursor-pointer">
+                      <h4 className="text-white/90 text-sm font-semibold mb-1 line-clamp-2">{post.title}</h4>
+                      <div className="flex items-center gap-2 text-white/50 text-xs">
+                        <span>{post.category}</span>
+                        <span>•</span>
+                        <span>{post.replies} replies</span>
+                        <span>•</span>
+                        <span>{post.views} views</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
-            {/* Community Stats */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10">
-              <h3 className="text-lg font-bold text-white mb-4 drop-shadow-md">Community Stats</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white/70">
-                    <Users size={18} />
-                    <span className="text-sm">Members</span>
-                  </div>
-                  <span className="text-white font-bold">2,847</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white/70">
-                    <MessageSquare size={18} />
-                    <span className="text-sm">Discussions</span>
-                  </div>
-                  <span className="text-white font-bold">342</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white/70">
-                    <Heart size={18} />
-                    <span className="text-sm">Replies</span>
-                  </div>
-                  <span className="text-white font-bold">15,672</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Your Activity */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
-                  U
-                </div>
-                <div>
-                  <h3 className="text-white font-bold">Your Activity</h3>
-                </div>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-white/70">
-                  <span>Discussions started</span>
-                  <span className="text-white font-semibold">3</span>
-                </div>
-                <div className="flex justify-between text-white/70">
-                  <span>Replies posted</span>
-                  <span className="text-white font-semibold">12</span>
-                </div>
-                <div className="flex justify-between text-white/70">
-                  <span>Helpful reactions</span>
-                  <span className="text-white font-semibold">28</span>
-                </div>
-              </div>
-              <button className="mt-4 w-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium py-2 rounded-full transition-all border border-white/20">
-                View Profile
-              </button>
-            </div>
+            {/* Removed Community Stats and Your Activity — replaced by dynamic Trending Discussions above */}
           </div>
         </div>
+
+        {/* Help Footer Section */}
+        <section className="mt-16 mb-8">
+          <div className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24">
+            <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Still need more help?</h2>
+            <p className="text-white font-semibold">Connect with a professional counselor</p>
+            <button className="mt-8 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-full border border-white/30 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg">
+              Book an appointment with us now
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   );

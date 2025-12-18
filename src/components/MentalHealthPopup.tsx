@@ -3,21 +3,40 @@ import { X, Phone, MessageCircle, AlertCircle } from 'lucide-react';
 
 const MentalHealthPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Always show popup on page load
-    setIsOpen(true);
+    // Fade in popup with slight delay
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+      setTimeout(() => setIsVisible(true), 50);
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const closePopup = () => {
-    setIsOpen(false);
+    setIsVisible(false);
+    setTimeout(() => {
+      setIsOpen(false);
+      // Mark popup as seen
+      sessionStorage.setItem('hasSeenPopup', 'true');
+    }, 300);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-[9999] flex items-center justify-center p-4">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl shadow-black/20 max-w-sm w-full p-6">
+    <div 
+      className={`fixed inset-0 bg-black/40 z-[9999] flex items-center justify-center p-4 transition-opacity duration-500 ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
+      <div 
+        className={`bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl shadow-black/20 max-w-sm w-full p-6 transition-all duration-500 ${
+          isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+        }`}
+      >
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div>

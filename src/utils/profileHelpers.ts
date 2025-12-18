@@ -73,7 +73,12 @@ export const getUserProfile = async () => {
       age: data.age ? decryptData(data.age, encryptionKey) : null,
       triggers: data.triggers && Array.isArray(data.triggers)
         ? decryptArray(data.triggers, encryptionKey)
-        : []
+        : [],
+      // Include public fields
+      displayName: data.displayName || null,
+      profileImageUrl: data.profileImageUrl || null,
+      likedPosts: data.likedPosts || [],
+      likedComments: data.likedComments || []
     };
 
     console.log('Profile data decrypted successfully');
