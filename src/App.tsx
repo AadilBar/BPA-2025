@@ -3,6 +3,7 @@ import Education from './pages/education'
 import Help from './pages/help'
 import Counseling from './pages/counseling'
 import Forum from './pages/forum'
+import CreatePost from './pages/createPost'
 import Testimonials from './pages/testimonials'
 import SignIn from './pages/signin'
 import AccountSetup from './pages/accountSetup'
@@ -49,6 +50,7 @@ function App() {
             <Route path="/help" element={<Help />} />
             <Route path="/counseling" element={<Counseling />} />
             <Route path="/forum" element={<Forum />} />
+            <Route path="/forum/create" element={<CreatePost />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/accountsetup" element={<AccountSetup />} />
