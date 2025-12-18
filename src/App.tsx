@@ -18,7 +18,6 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import Navbar from './components/Navbar';
-import MentalHealthPopup from './components/MentalHealthPopup';
 
 function App() {
 
@@ -43,7 +42,6 @@ function App() {
   return (
     <>
       <Navbar />
-      <MentalHealthPopup />
       <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/education" element={<Education />} />
