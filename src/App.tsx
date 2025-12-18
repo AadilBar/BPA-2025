@@ -20,6 +20,7 @@ import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
 
@@ -70,6 +71,7 @@ function App() {
 export default function AppWrapper() {
   return (
     <HashRouter>
+      <ScrollToTop />
       <App />
     </HashRouter>
   );

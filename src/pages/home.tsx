@@ -15,18 +15,12 @@ function Home() {
     const [pageLoaded, setPageLoaded] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
 
-    // Check if this is the first visit
-    const isFirstVisit = !sessionStorage.getItem('hasVisitedHome');
+    // Check if user has seen the popup before
     const hasSeenPopup = sessionStorage.getItem('hasSeenPopup');
 
     // Initial page fade-in and setup
     useEffect(() => {
         setPageLoaded(true);
-        
-        // If not first visit, show content immediately
-        if (!isFirstVisit) {
-            setShowContent(true);
-        }
         
         // Show popup after delay only if never seen before
         if (!hasSeenPopup) {
@@ -38,8 +32,10 @@ function Home() {
         }
     }, []);
 
+    // Remove forced immediate scrollTo — keep original transition logic to control landing
+
     const triggerTransition = () => {
-        if (isTransitioning || showContent) return;
+        if (isTransitioning) return;
         
         // Start transition immediately
         setIsTransitioning(true);
@@ -50,6 +46,20 @@ function Home() {
             setIsTransitioning(false);
             // Mark that user has visited home
             sessionStorage.setItem('hasVisitedHome', 'true');
+            // Immediately scroll to top when transition completes
+            window.scrollTo(0, 0);
+        }, 400);
+    };
+
+    const reverseTransition = () => {
+        if (isTransitioning) return;
+        
+        setIsTransitioning(true);
+        
+        setTimeout(() => {
+            setShowContent(false);
+            setIsTransitioning(false);
+            setHasScrolled(false);
         }, 400);
     };
 
@@ -66,62 +76,64 @@ function Home() {
         }
     };
 
-    // Prevent scrolling and trigger transition instead
+    // Detect scroll direction and trigger/reverse transition
     useEffect(() => {
-        const handleScroll = (e: Event) => {
-            if (!showContent && !isTransitioning) {
-                e.preventDefault();
-                window.scrollTo(0, 0);
-                
-                if (!hasScrolled) {
-                    setHasScrolled(true);
-                    triggerTransition();
-                }
-            }
-        };
+        let lastScrollY = 0;
 
         const handleWheel = (e: WheelEvent) => {
-            if (!showContent && !isTransitioning) {
+            // Only react to trusted (user-generated) wheel events to avoid programmatic/autoplay triggers
+            if (!e.isTrusted) return;
+            
+            const scrollingDown = e.deltaY > 0;
+            
+            if (scrollingDown && !showContent && !isTransitioning && !hasScrolled) {
+                // Scrolling down from landing -> trigger transition
                 e.preventDefault();
-                
-                if (!hasScrolled) {
-                    setHasScrolled(true);
-                    triggerTransition();
-                }
+                setHasScrolled(true);
+                triggerTransition();
+            } else if (!scrollingDown && showContent && !isTransitioning && window.scrollY === 0) {
+                // Scrolling up at top of content -> reverse back to landing
+                e.preventDefault();
+                reverseTransition();
             }
         };
 
-        // Only prevent scrolling if content is not shown
-        if (!showContent) {
-            window.addEventListener('scroll', handleScroll, { passive: false });
-            window.addEventListener('wheel', handleWheel, { passive: false });
-        }
-        
+        const handleTouch = (e: TouchEvent) => {
+            // Only react to trusted (user) touch events
+            if (!e.isTrusted) return;
+            
+            // Determine scroll direction from touch
+            const touch = e.touches[0];
+            if (!touch) return;
+            
+            const currentY = touch.clientY;
+            const scrollingDown = lastScrollY > currentY;
+            lastScrollY = currentY;
+            
+            if (scrollingDown && !showContent && !isTransitioning && !hasScrolled) {
+                e.preventDefault();
+                setHasScrolled(true);
+                triggerTransition();
+            } else if (!scrollingDown && showContent && !isTransitioning && window.scrollY === 0) {
+                e.preventDefault();
+                reverseTransition();
+            }
+        };
+
+        // Listen for direct user inputs: wheel and touchstart/touchmove
+        window.addEventListener('wheel', handleWheel, { passive: false });
+        window.addEventListener('touchstart', handleTouch, { passive: false });
+        window.addEventListener('touchmove', handleTouch, { passive: false });
+
         return () => {
-            window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('wheel', handleWheel);
+            window.removeEventListener('touchstart', handleTouch);
+            window.removeEventListener('touchmove', handleTouch);
         };
     }, [showContent, isTransitioning, hasScrolled]);
 
-    // Scroll to content after transition
-    useEffect(() => {
-        if (showContent) {
-            window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-        }
-    }, [showContent]);
-
-    // Prevent body scrolling when on landing
-    useEffect(() => {
-        if (!showContent) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-        
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [showContent]);
+    // NOTE: Removed delayed scrollTo effect - now happens instantly when transition completes inside triggerTransition()
+    // This was causing the page to auto-scroll even when the user didn't initiate it.
 
     return (
         <>
@@ -144,11 +156,16 @@ function Home() {
                 transition: 'opacity 800ms ease-out'
             }}
         >
-            {/* Landing Section - Now always visible, not hidden */}
+            {/* Landing Section - show during transition even if showContent is true for reverse animation */}
             <section 
-                className="min-h-screen flex items-center justify-center overflow-hidden"
+                className={`min-h-screen flex items-center justify-center overflow-hidden ${showContent && !isTransitioning ? 'hidden' : ''}`}
                 style={{
-                    position: 'relative',
+                    position: showContent && !isTransitioning ? 'relative' : 'fixed',
+                    top: showContent && !isTransitioning ? undefined : 0,
+                    left: showContent && !isTransitioning ? undefined : 0,
+                    right: showContent && !isTransitioning ? undefined : 0,
+                    bottom: showContent && !isTransitioning ? undefined : 0,
+                    zIndex: showContent && !isTransitioning ? undefined : 50,
                     backgroundImage: `url(${tsplanding})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
