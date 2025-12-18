@@ -4,7 +4,7 @@ import { LogOut, User as UserIcon } from 'lucide-react';
 import { auth } from '../firebase/firebase';
 import { signOut } from 'firebase/auth';
 import { getUserProfile } from '../utils/profileHelpers';
-import NimbusLogo from '../assets/Nimbus1.png';
+import NimbusLogo from '../assets/TheSkylineProjectLogo3.png';
 import NimbusSearch from './NimbusSearch';
 
 function Navbar() {
@@ -135,7 +135,7 @@ function Navbar() {
                             <img 
                                 src={NimbusLogo} 
                                 alt="Nimbus" 
-                                className="h-8 w-8 transition-transform duration-300 ease-out group-hover:scale-125 drop-shadow-lg"
+                                className="h-9 w-18 transition-transform duration-300 ease-out group-hover:scale-125 drop-shadow-lg"
                             />
                         </Link>
                         
