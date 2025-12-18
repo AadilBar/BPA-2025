@@ -327,7 +327,7 @@ export default function DiscussionView() {
     }
   };
 
-  const toggleCommentLike = async (commentPath: string) => {
+  const toggleCommentLike = async (commentPath: string, _likes: number) => {
     if (!auth.currentUser) return;
     
     try {
