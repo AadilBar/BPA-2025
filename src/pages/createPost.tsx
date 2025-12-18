@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, X, AlertCircle } from 'lucide-react';
 import { db, auth } from '../firebase/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getUserProfile } from '../utils/profileHelpers';
 
 const MENTAL_HEALTH_TRIGGERS = [
   'Anxiety',
@@ -38,7 +39,7 @@ export default function CreatePost() {
     triggers: [] as string[]
   });
 
-  const categories = ['Uplifty', 'Depression', 'Relationships', 'Recovery', 'Self-Care'];
+  const categories = ['Uplifty', 'Depression', 'Relationships', 'Recovery', 'Self-Care', 'Informational'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -107,7 +108,12 @@ export default function CreatePost() {
     setIsSubmitting(true);
 
     try {
-      // Create the post document - store only userId, not author name/avatar
+      // Get user profile for public display information only
+      const userProfile = await getUserProfile();
+      const displayName = userProfile?.displayName || auth.currentUser.email?.split('@')[0] || 'Anonymous';
+      const profileImageUrl = userProfile?.profileImageUrl || '';
+
+      // Create the post document with public-safe display info
       const postData = {
         title: formData.title.trim(),
         content: formData.content.trim(),
@@ -115,6 +121,9 @@ export default function CreatePost() {
         tags: formData.tags,
         triggers: formData.triggers,
         userId: auth.currentUser.uid,
+        // Store public display info with the post (not sensitive)
+        authorDisplayName: displayName,
+        authorProfilePic: profileImageUrl,
         createdAt: serverTimestamp(),
         replies: 0,
         likes: 0,
@@ -351,6 +360,15 @@ export default function CreatePost() {
               <span>Mark triggers to help members navigate content safely</span>
             </li>
           </ul>
+        </div>
+
+        {/* Help Footer Section */}
+        <div className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24 mt-8">
+          <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Still need more help?</h2>
+          <p className="text-white font-semibold">Connect with a professional counselor</p>
+          <button className="mt-8 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-full border border-white/30 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg">
+            Book an appointment with us now
+          </button>
         </div>
       </div>
     </div>

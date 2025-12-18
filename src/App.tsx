@@ -4,6 +4,7 @@ import Help from './pages/help'
 import Counseling from './pages/counseling'
 import Forum from './pages/forum'
 import CreatePost from './pages/createPost'
+import DiscussionView from './pages/discussionView'
 import Testimonials from './pages/testimonials'
 import SignIn from './pages/signin'
 import AccountSetup from './pages/accountSetup'
@@ -23,8 +24,9 @@ function App() {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      // Reduce duration and use linear easing to effectively remove inertia/momentum
+      duration: 0,
+      easing: (t) => t,
     });
 
     function raf(time: number) {
@@ -49,6 +51,7 @@ function App() {
             <Route path="/counseling" element={<Counseling />} />
             <Route path="/forum" element={<Forum />} />
             <Route path="/forum/create" element={<CreatePost />} />
+            <Route path="/forum/:id" element={<DiscussionView />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/accountsetup" element={<AccountSetup />} />

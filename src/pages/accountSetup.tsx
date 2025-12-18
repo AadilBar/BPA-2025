@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Upload, AlertCircle, CheckCircle, Phone, Cake, Heart, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, storage } from '../firebase/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { getUserProfile } from '../utils/profileHelpers';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { encryptData, encryptArray } from '../utils/encryption';
 
@@ -30,6 +31,7 @@ export default function AccountSetup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [existingDocId, setExistingDocId] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string>('');
   const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
@@ -45,6 +47,28 @@ export default function AccountSetup() {
     if (!auth.currentUser) {
       navigate('/signin');
     }
+    // If user already has a profile, prefill the form for editing
+    const loadProfile = async () => {
+      try {
+        const profile = await getUserProfile();
+        if (profile) {
+          setExistingDocId(profile.docId || null);
+          // Prefill form with decrypted values
+          setFormData({
+            phone: (profile as any).phone || '',
+            age: (profile as any).age || '',
+            bio: (profile as any).bio || '',
+            preferences: (profile as any).preferences || ''
+          });
+          setSelectedTriggers((profile as any).triggers || []);
+          if ((profile as any).profileImageUrl) setProfileImagePreview((profile as any).profileImageUrl);
+        }
+      } catch (err) {
+        console.warn('Could not prefill profile:', err);
+      }
+    };
+
+    loadProfile();
   }, [navigate]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +108,8 @@ export default function AccountSetup() {
       }
 
       console.log('Phone validation passed');
-      let profileImageUrl = '';
+  // Preserve existing preview URL (from existing profile) unless a new image is uploaded
+  let profileImageUrl = profileImagePreview || '';
 
       // Upload profile image if provided
       if (profileImage) {
@@ -122,16 +147,11 @@ export default function AccountSetup() {
 
       // Encryption key is the user's UID
       const encryptionKey = user.uid;
-      console.log('Using encryption key:', encryptionKey);
 
       // Encrypt sensitive fields
       const encryptedPhone = encryptData(formData.phone, encryptionKey);
-      const encryptedAge = formData.age 
-        ? encryptData(formData.age, encryptionKey) 
-        : null;
+      const encryptedAge = formData.age ? encryptData(formData.age, encryptionKey) : null;
       const encryptedTriggers = encryptArray(selectedTriggers, encryptionKey);
-
-      console.log('Sensitive data encrypted');
 
       const profileData = {
         userId: user.uid,
@@ -146,23 +166,27 @@ export default function AccountSetup() {
         bio: formData.bio,
         preferences: formData.preferences,
         setupCompleted: true,
-        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
 
-      console.log('Profile data prepared (with encrypted fields)');
-
-      // Add document with random ID in Users collection
-      const usersCollectionRef = collection(db, 'Users');
-      console.log('Adding document to Firestore');
-      const docRef = await addDoc(usersCollectionRef, profileData);
-      console.log('Document added with ID:', docRef.id);
-
-      setSuccess('Profile setup completed! Redirecting to home...');
-      setLoading(false);
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
+      if (existingDocId) {
+        // Update existing profile document
+        const docRef = doc(db, 'Users', existingDocId);
+        await updateDoc(docRef, profileData);
+        setSuccess('Profile updated successfully! Redirecting...');
+        setLoading(false);
+        setTimeout(() => navigate('/profile'), 1200);
+      } else {
+        // Create new profile document
+        const usersCollectionRef = collection(db, 'Users');
+        await addDoc(usersCollectionRef, {
+          ...profileData,
+          createdAt: serverTimestamp()
+        });
+        setSuccess('Profile setup completed! Redirecting to home...');
+        setLoading(false);
+        setTimeout(() => navigate('/'), 1500);
+      }
     } catch (err: any) {
       console.error('Error setting up profile:', err);
       console.error('Error code:', err.code);
