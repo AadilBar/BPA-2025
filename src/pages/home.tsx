@@ -6,17 +6,30 @@ function Home() {
             background: 'linear-gradient(180deg, #0A0F2A 0%, #6A1E55 45%, #D76F86 75%, #FFA54C 90%)'
         }}>
             {/* Landing Section */}
-            <section className="h-screen relative flex items-start">
-                {/* Title + Button */}
-                <div className="mt-24 z-10 px-8 md:px-16 lg:px-24 w-full">
-                    <h1 className="text-5xl md:text-6xl font-bold text-white mb-8 leading-tight">
-                        Struggling?<br />
-                        Your Journey of<br />
+            <section className="min-h-screen relative flex items-center">
+                {/* Title + Content */}
+                <div className="z-10 px-8 md:px-16 lg:px-24 max-w-4xl">
+                    <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">
+                        Your Journey to<br />
                         Healing Starts Here
                     </h1>
-                    <button className="absolute bottom-64 right-32 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-full border border-white/30 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg">
-                        Enter Safe Space →
-                    </button>
+                    
+                    <p className="text-xl md:text-2xl text-white/90 mb-4 max-w-3xl leading-relaxed font-medium">
+                        Mental health matters. You're not alone on this journey.
+                    </p>
+                    
+                    <p className="text-lg md:text-xl text-white/80 mb-12 max-w-2xl leading-relaxed">
+                        Connect with a supportive community, access professional resources, and find the help you need in a safe, understanding environment.
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button className="px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-xl text-white font-bold rounded-full border border-white/40 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg hover:scale-105">
+                            Get Started →
+                        </button>
+                        <button className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-semibold rounded-full border border-white/30 shadow-xl transition-all duration-300 hover:scale-105">
+                            Learn More
+                        </button>
+                    </div>
                 </div>
 
                 {/* Wavy transition at bottom */}
