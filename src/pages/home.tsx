@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Discussions from "../components/home/discussions";
-import Testimonial from "../components/home/testimonials";
 import MentalHealthPopup from "../components/MentalHealthPopup";
 import tsplanding from '../assets/tsplanding.png';
+import person1 from '../assets/people/pexels-creationhill-1681010.jpg';
+import person2 from '../assets/people/pexels-olly-733872.jpg';
+import person3 from '../assets/people/pexels-olly-774095.jpg';
 
 function Home() {
     const navigate = useNavigate();
@@ -262,131 +264,210 @@ function Home() {
                 </div>
             </section>
 
-            {/* Nimbus Overview */}
-
+            {/* Main Content */}
             <section 
                 id="main-content" 
-                className={`min-h-screen relative flex flex-col items-center pt-16 pb-32`}
+                className={`relative flex flex-col items-center pb-32`}
                 style={{
+                    background: 'radial-gradient(ellipse at 20% 10%, #0A0F2A 0%, #6A1E55 35%, #D76F86 65%, #FFA54C 95%), linear-gradient(155deg, #0A0F2A 0%, #5A1648 40%, #C86080 70%, #FF954A 100%)',
                     opacity: showContent ? 1 : 0,
                     transform: showContent ? 'translateY(0)' : 'translateY(5px)',
                     transition: 'all 800ms cubic-bezier(0.4, 0.0, 0.2, 1)',
                     pointerEvents: showContent ? 'auto' : 'none'
                 }}
             > 
-
-                <div className="flex items-center flex-col mt-16 px-8 md:px-16 lg:px-24"> 
-                    <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Do you have a question?</h2>
-                    <p className="md:text-2xl text-white mb-16">Nimbus is here to help</p>
-                    <div className="flex flex-row justify-center w-full">
-                        <input className="border border-white/30 bg-white/10 backdrop-blur-xl w-[100%] px-4 py-2 rounded-full text-white placeholder-white/60 shadow-lg focus:outline-none focus:border-white/50 transition-all duration-300" placeholder="Search mental health topics..." />
-                    </div>
-                    
-                </div>
-
-                <h2 className="mt-32 md:text-5xl font-bold ">Latest Discussions</h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-8 md:px-16 lg:px-24 mt-16">
-                    <Discussions 
-                        category="Mental Health"
-                        title="How to manage anxiety?"
-                        description="Looking for tips and strategies to cope with anxiety."
-                        profileImageUrl="home/person1.jpg"
-                        authorName="John Doe"
-                        timestamp="2 hours ago"
-                        commentsCount={5}
-                    />
-                    <Discussions 
-                        category="Mental Health"
-                        title="How to manage anxiety?"
-                        description="Looking for tips and strategies to cope with anxiety."
-                        profileImageUrl="home/person2.jpg"
-                        authorName="John Doe"
-                        timestamp="2 hours ago"
-                        commentsCount={5}
-                    />
-                    <Discussions 
-                        category="Mental Health"
-                        title="How to manage anxiety?"
-                        description="Looking for tips and strategies to cope with anxiety."
-                        profileImageUrl="home/person3.jpg"
-                        authorName="John Doe"
-                        timestamp="2 hours ago"
-                        commentsCount={5}
-                    />
-                    <Discussions 
-                        category="Mental Health"
-                        title="How to manage anxiety?"
-                        description="Looking for tips and strategies to cope with anxiety."
-                        profileImageUrl="home/person1.jpg"
-                        authorName="John Doe"
-                        timestamp="2 hours ago"
-                        commentsCount={5}
-                    />
-                    <Discussions 
-                        category="Mental Health"
-                        title="How to manage anxiety?"
-                        description="Looking for tips and strategies to cope with anxiety."
-                        profileImageUrl="home/person2.jpg"
-                        authorName="John Doe"
-                        timestamp="2 hours ago"
-                        commentsCount={5}
-                    />
-                    <Discussions 
-                        category="Mental Health"
-                        title="How to manage anxiety?"
-                        description="Looking for tips and strategies to cope with anxiety."
-                        profileImageUrl="home/person3.jpg"
-                        authorName="John Doe"
-                        timestamp="2 hours ago"
-                        commentsCount={5}
-                    />
-                </div>
-
-
-
-            
-            </section>
-
-            {/** testimonila section */}
-
-            <section className="pb-32">
-                <div className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24"> 
-
-                    <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Stories of Hope</h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16"> 
-                        <Testimonial 
-                            profileImageUrl="home/person1.jpg"
-                            authorName="Jane Smith"
-                            content="Nimbus helped me find the support I needed during tough times. I'm grateful for this community."
-                        />
-                        <Testimonial 
-                            profileImageUrl="home/person2.jpg"
-                            authorName="Mike Johnson"
-                            content="The resources and discussions on Nimbus have been invaluable in my journey to mental wellness."
-                        />
-                        <Testimonial 
-                            profileImageUrl="home/person3.jpg"
-                            authorName="Mike Johnson"
-                            content="The resources and discussions on Nimbus have been invaluable in my journey to mental wellness."
-                        />
+                {/* Testimonials Section - Full Width Stories */}
+                <div className="w-full py-24 relative space-y-40">
+                    {/* Story 1 - Image Left */}
+                    <div className="w-full px-8 md:px-16 lg:px-24">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
+                            <div className="relative">
+                                {/* Decorative cloud pin */}
+                                <div className="absolute -top-8 -left-8 w-20 h-20 bg-white/20 backdrop-blur-xl rounded-full border-2 border-white/40 shadow-xl flex items-center justify-center z-20">
+                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"/>
+                                    </svg>
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 to-blue-500/20 rounded-full blur-3xl"></div>
+                                <img 
+                                    src={person1} 
+                                    alt="Sarah's Journey" 
+                                    className="relative z-10 w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+                                />
+                            </div>
+                            <div className="relative space-y-6">
+                                {/* Floating quote decoration */}
+                                <div className="absolute -top-6 -left-6 text-white/10 text-[120px] font-serif leading-none">"</div>
+                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Sarah's Journey</h3>
+                                <div className="h-1 w-24 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full mb-6"></div>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    For years, I battled with depression that felt like an endless darkness. Some days, getting out of bed seemed impossible. I felt completely alone in my struggle.
+                                </p>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    Finding Nimbus changed everything. The community welcomed me with open arms, and through their support and the professional counseling I found here, I slowly began to see light again.
+                                </p>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    Today, I'm not just surviving—I'm thriving. I've learned to manage my mental health, and I'm passionate about helping others who are going through what I experienced. Recovery is possible.
+                                </p>
+                                <p className="text-white/70 text-lg font-semibold mt-8 italic flex items-center gap-2">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
+                                    </svg>
+                                    Sarah M., 2 years on her journey
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
+                    {/* Story 2 - Image Right */}
+                    <div className="w-full px-8 md:px-16 lg:px-24">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
+                            <div className="relative order-2 lg:order-1 space-y-6">
+                                {/* Floating quote decoration */}
+                                <div className="absolute -top-6 -right-6 text-white/10 text-[120px] font-serif leading-none">"</div>
+                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Michael's Recovery</h3>
+                                <div className="h-1 w-24 bg-gradient-to-r from-blue-400 to-sky-500 rounded-full mb-6"></div>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    My addiction to substances nearly cost me everything—my family, my career, my life. I hit rock bottom and didn't know if I could ever climb back up.
+                                </p>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    Through Nimbus, I connected with others who understood my pain without judgment. The resources here pointed me toward professional treatment, and the community kept me accountable during my darkest moments.
+                                </p>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    I've been clean for 18 months now. I've rebuilt relationships with my family and found purpose in mentoring others in recovery. Every day is a choice, and Nimbus helps me make the right one.
+                                </p>
+                                <p className="text-white/70 text-lg font-semibold mt-8 italic flex items-center gap-2">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
+                                    </svg>
+                                    Michael R., 18 months sober
+                                </p>
+                            </div>
+                            <div className="relative order-1 lg:order-2">
+                                {/* Decorative heart pin */}
+                                <div className="absolute -top-8 -right-8 w-20 h-20 bg-white/20 backdrop-blur-xl rounded-full border-2 border-white/40 shadow-xl flex items-center justify-center z-20">
+                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-bl from-blue-400/20 to-sky-500/20 rounded-full blur-3xl"></div>
+                                <img 
+                                    src={person2} 
+                                    alt="Michael's Recovery" 
+                                    className="relative z-10 w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+                                />
+                            </div>
+                        </div>
+                    </div>
 
+                    {/* Story 3 - Image Left */}
+                    <div className="w-full px-8 md:px-16 lg:px-24">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
+                            <div className="relative">
+                                {/* Decorative sun/star pin */}
+                                <div className="absolute -top-8 -left-8 w-20 h-20 bg-white/20 backdrop-blur-xl rounded-full border-2 border-white/40 shadow-xl flex items-center justify-center z-20">
+                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-sky-300/20 to-blue-600/20 rounded-full blur-3xl"></div>
+                                <img 
+                                    src={person3} 
+                                    alt="Jessica's Transformation" 
+                                    className="relative z-10 w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+                                />
+                            </div>
+                            <div className="relative space-y-6">
+                                {/* Floating quote decoration */}
+                                <div className="absolute -top-6 -left-6 text-white/10 text-[120px] font-serif leading-none">"</div>
+                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Jessica's Transformation</h3>
+                                <div className="h-1 w-24 bg-gradient-to-r from-sky-300 to-blue-600 rounded-full mb-6"></div>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    Anxiety controlled my life for so long. Panic attacks would strike without warning, keeping me isolated and afraid to leave my home. I felt trapped in my own mind.
+                                </p>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    Nimbus gave me the courage to seek help. The forum discussions taught me I wasn't alone, and the professional counselors here gave me tools to manage my anxiety effectively.
+                                </p>
+                                <p className="text-white/95 text-xl leading-relaxed">
+                                    Now I'm living life on my terms. I travel, I've made new friends, and I even started my own business. The anxiety hasn't disappeared, but I've learned to live alongside it rather than letting it control me.
+                                </p>
+                                <p className="text-white/70 text-lg font-semibold mt-8 italic flex items-center gap-2">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
+                                    </svg>
+                                    Jessica L., reclaiming her life
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Combined Discussions & Help Section */}
+                <div className="w-full py-20 px-8 md:px-16 lg:px-24">
+                    <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        {/* Left: Discussions */}
+                        <div className="space-y-8">
+                            <h2 className="text-5xl font-bold text-white">Latest Discussions</h2>
+                            
+                            <div className="space-y-6">
+                                <Discussions 
+                                    category="Mental Health"
+                                    title="How to manage anxiety?"
+                                    description="Looking for tips and strategies to cope with anxiety."
+                                    profileImageUrl="home/person1.jpg"
+                                    authorName="John Doe"
+                                    timestamp="2 hours ago"
+                                    commentsCount={5}
+                                />
+                                <Discussions 
+                                    category="Support"
+                                    title="Dealing with stress at work"
+                                    description="Anyone else struggling with work-life balance?"
+                                    profileImageUrl="home/person2.jpg"
+                                    authorName="Jane Smith"
+                                    timestamp="5 hours ago"
+                                    commentsCount={12}
+                                />
+                                <Discussions 
+                                    category="Wellness"
+                                    title="Meditation tips for beginners"
+                                    description="Starting my mindfulness journey, any advice?"
+                                    profileImageUrl="home/person3.jpg"
+                                    authorName="Mike Johnson"
+                                    timestamp="1 day ago"
+                                    commentsCount={8}
+                                />
+                            </div>
+
+                            <button 
+                                onClick={() => navigate('/forum')}
+                                className="px-10 py-4 bg-white/15 hover:bg-white/25 backdrop-blur-xl text-white font-bold text-lg rounded-full border border-white/30 shadow-xl transition-all duration-300 hover:scale-105"
+                            >
+                                View More Discussions
+                            </button>
+                        </div>
+
+                        {/* Right: Need Help */}
+                        <div className="lg:sticky lg:top-24">
+                            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl h-full flex flex-col justify-center items-center text-center space-y-6">
+                                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mb-4">
+                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                                    </svg>
+                                </div>
+                                <h2 className="text-4xl font-bold text-white">Still need more help?</h2>
+                                <p className="text-white/80 text-lg">Connect with a professional counselor who can provide personalized support</p>
+                                <button 
+                                    onClick={() => navigate('/counseling')}
+                                    className="px-12 py-5 bg-white/20 hover:bg-white/30 backdrop-blur-xl text-white font-bold text-lg rounded-full border border-white/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:scale-105"
+                                >
+                                    Book an appointment now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
-
-            {/** booking stufff */}
-
-            <section className="pb-32"> 
-                <div className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24"> 
-                    <h2 className="md:text-5xl font-bold text-white mb-2 leading-tight">Still need more help?</h2>
-                    <p className="text-white font-semibold">Connect with a professional counselor</p>
-                    <button className="mt-8 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-full border border-white/30 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg">Book an appointmentr with us now
-                    </button>
-                </div>
-             </section>
         </div>
         
         {/* Mental Health Popup with delayed fade-in */}
