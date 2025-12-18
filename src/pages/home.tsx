@@ -53,6 +53,19 @@ function Home() {
         }, 400);
     };
 
+    const scrollToContent = () => {
+        // If content is not shown yet, trigger transition first
+        if (!showContent) {
+            triggerTransition();
+        } else {
+            // If already shown, just scroll to it
+            const contentSection = document.getElementById('main-content');
+            if (contentSection) {
+                contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    };
+
     // Prevent scrolling and trigger transition instead
     useEffect(() => {
         const handleScroll = (e: Event) => {
@@ -78,8 +91,11 @@ function Home() {
             }
         };
 
-        window.addEventListener('scroll', handleScroll, { passive: false });
-        window.addEventListener('wheel', handleWheel, { passive: false });
+        // Only prevent scrolling if content is not shown
+        if (!showContent) {
+            window.addEventListener('scroll', handleScroll, { passive: false });
+            window.addEventListener('wheel', handleWheel, { passive: false });
+        }
         
         return () => {
             window.removeEventListener('scroll', handleScroll);
@@ -90,7 +106,7 @@ function Home() {
     // Scroll to content after transition
     useEffect(() => {
         if (showContent) {
-            window.scrollTo({ top: 0, behavior: 'instant' });
+            window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
         }
     }, [showContent]);
 
@@ -128,18 +144,11 @@ function Home() {
                 transition: 'opacity 800ms ease-out'
             }}
         >
-            {/* Landing Section - Overlay */}
+            {/* Landing Section - Now always visible, not hidden */}
             <section 
-                className={`min-h-screen flex items-center justify-center overflow-hidden ${
-                    showContent ? 'hidden' : ''
-                }`}
+                className="min-h-screen flex items-center justify-center overflow-hidden"
                 style={{
-                    position: showContent ? 'relative' : 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: showContent ? 0 : 50,
+                    position: 'relative',
                     backgroundImage: `url(${tsplanding})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
@@ -207,7 +216,7 @@ function Home() {
                             Get Support
                         </button>
                         <button 
-                            onClick={triggerTransition}
+                            onClick={scrollToContent}
                             className="px-10 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-semibold text-lg rounded-full border border-white/30 shadow-xl transition-all duration-300 hover:scale-105"
                         >
                             View The Change
@@ -264,14 +273,14 @@ function Home() {
                 </div>
             </section>
 
-            {/* Main Content */}
+            {/* Main Content - Now positioned after landing section */}
             <section 
                 id="main-content" 
-                className={`relative flex flex-col items-center pb-32`}
+                className="relative flex flex-col items-center pb-32"
                 style={{
                     background: 'radial-gradient(ellipse at 20% 10%, #0A0F2A 0%, #6A1E55 35%, #D76F86 65%, #FFA54C 95%), linear-gradient(155deg, #0A0F2A 0%, #5A1648 40%, #C86080 70%, #FF954A 100%)',
                     opacity: showContent ? 1 : 0,
-                    transform: showContent ? 'translateY(0)' : 'translateY(5px)',
+                    transform: showContent ? 'translateY(0)' : 'translateY(20px)',
                     transition: 'all 800ms cubic-bezier(0.4, 0.0, 0.2, 1)',
                     pointerEvents: showContent ? 'auto' : 'none'
                 }}
@@ -282,12 +291,6 @@ function Home() {
                     <div className="w-full px-8 md:px-16 lg:px-24">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
                             <div className="relative">
-                                {/* Decorative cloud pin */}
-                                <div className="absolute -top-8 -left-8 w-20 h-20 bg-white/20 backdrop-blur-xl rounded-full border-2 border-white/40 shadow-xl flex items-center justify-center z-20">
-                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"/>
-                                    </svg>
-                                </div>
                                 <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 to-blue-500/20 rounded-full blur-3xl"></div>
                                 <img 
                                     src={person1} 
@@ -298,7 +301,7 @@ function Home() {
                             <div className="relative space-y-6">
                                 {/* Floating quote decoration */}
                                 <div className="absolute -top-6 -left-6 text-white/10 text-[120px] font-serif leading-none">"</div>
-                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Sarah's Journey</h3>
+                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Mike's Journey</h3>
                                 <div className="h-1 w-24 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full mb-6"></div>
                                 <p className="text-white/95 text-xl leading-relaxed">
                                     For years, I battled with depression that felt like an endless darkness. Some days, getting out of bed seemed impossible. I felt completely alone in my struggle.
@@ -325,7 +328,7 @@ function Home() {
                             <div className="relative order-2 lg:order-1 space-y-6">
                                 {/* Floating quote decoration */}
                                 <div className="absolute -top-6 -right-6 text-white/10 text-[120px] font-serif leading-none">"</div>
-                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Michael's Recovery</h3>
+                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Sarah's Recovery</h3>
                                 <div className="h-1 w-24 bg-gradient-to-r from-blue-400 to-sky-500 rounded-full mb-6"></div>
                                 <p className="text-white/95 text-xl leading-relaxed">
                                     My addiction to substances nearly cost me everything—my family, my career, my life. I hit rock bottom and didn't know if I could ever climb back up.
@@ -344,12 +347,7 @@ function Home() {
                                 </p>
                             </div>
                             <div className="relative order-1 lg:order-2">
-                                {/* Decorative heart pin */}
-                                <div className="absolute -top-8 -right-8 w-20 h-20 bg-white/20 backdrop-blur-xl rounded-full border-2 border-white/40 shadow-xl flex items-center justify-center z-20">
-                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
-                                    </svg>
-                                </div>
+                                
                                 <div className="absolute inset-0 bg-gradient-to-bl from-blue-400/20 to-sky-500/20 rounded-full blur-3xl"></div>
                                 <img 
                                     src={person2} 
@@ -364,12 +362,6 @@ function Home() {
                     <div className="w-full px-8 md:px-16 lg:px-24">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
                             <div className="relative">
-                                {/* Decorative sun/star pin */}
-                                <div className="absolute -top-8 -left-8 w-20 h-20 bg-white/20 backdrop-blur-xl rounded-full border-2 border-white/40 shadow-xl flex items-center justify-center z-20">
-                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd"/>
-                                    </svg>
-                                </div>
                                 <div className="absolute inset-0 bg-gradient-to-br from-sky-300/20 to-blue-600/20 rounded-full blur-3xl"></div>
                                 <img 
                                     src={person3} 
