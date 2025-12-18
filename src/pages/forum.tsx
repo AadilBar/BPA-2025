@@ -1,10 +1,14 @@
 import { Search, Plus, Pin, MessageCircle, ThumbsUp, TrendingUp, Users, MessageSquare, Heart } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { db } from '../firebase/firebase';
+import { collection, query, getDocs, orderBy, where } from 'firebase/firestore';
 
 interface Discussion {
-  id: number;
+  id: string;
   title: string;
   content: string;
+  userId: string;
   author: string;
   authorAvatar: string;
   timeAgo: string;
@@ -13,65 +17,104 @@ interface Discussion {
   category: string;
   isPinned?: boolean;
   tags?: string[];
+  triggers?: string[];
+  createdAt: any;
 }
 
 export default function Forum() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('Most Recent');
   const [timeFilter, setTimeFilter] = useState('All Time');
+  const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const discussions: Discussion[] = [
-    {
-      id: 1,
-      title: 'Welcome to Dream Community - Community Guidelines',
-      content: 'Please read our community guidelines to ensure a safe and supportive environment for everyone. Learn about our values, rules, and how to report concerns.',
-      author: 'DreamModerator',
-      authorAvatar: '👤',
-      timeAgo: '4 days ago',
-      replies: 235,
-      likes: 2145,
-      category: 'Uplifty',
-      isPinned: true,
-      tags: ['guidelines', 'community']
-    },
-    {
-      id: 2,
-      title: 'Dealing with social anxiety at work - any tips?',
-      content: "I've been struggling with social anxiety in my workplace and it's affecting my performance. I get nervous during meetings and avoid speaking up even when I have good ideas. Has anyone dealt with similar issues? What strategies helped you?",
-      author: 'Sarah_M',
-      authorAvatar: '👤',
-      timeAgo: '2 hours ago',
-      replies: 84,
-      likes: 217,
-      category: 'Uplifty',
-      tags: ['anxiety', 'work']
-    },
-    {
-      id: 3,
-      title: 'Morning routines that actually help with mental health',
-      content: "I've been experimenting with different morning routines to see what helps boost my mood. So far I've been working for me is: 10 min meditation, cold shower, journaling, and some light stretching. Has anyone else found specific routines throughout the day has been remarkable!",
-      author: 'MindfulLiving',
-      authorAvatar: '👤',
-      timeAgo: '5 hours ago',
-      replies: 156,
-      likes: 438,
-      category: 'Self-Care',
-      tags: ['routine', 'wellness']
-    },
-    {
-      id: 4,
-      title: 'Small wins thread - celebrate your progress!',
-      content: "Let's use this thread to celebrate small wins that often go unnoticed but are huge accomplishments. Share your recent small wins here! I'll start: I finally managed to stick with therapy for 6 months, something I never thought I'd...",
-      author: 'HopefulUser',
-      authorAvatar: '👤',
-      timeAgo: '1 day ago',
-      replies: 803,
-      likes: 47,
-      category: 'Depression',
-      tags: ['progress', 'positivity']
+  // Fetch discussions from Firebase
+  useEffect(() => {
+    const fetchDiscussions = async () => {
+      try {
+        setLoading(true);
+        const forumRef = collection(db, 'forum');
+        const q = query(forumRef, orderBy('createdAt', 'desc'));
+        const querySnapshot = await getDocs(q);
+        
+        // Get unique user IDs
+        const userIds = [...new Set(querySnapshot.docs.map(doc => doc.data().userId))];
+        
+        // Fetch all user profiles
+        const userProfiles: { [key: string]: any } = {};
+        for (const userId of userIds) {
+          if (userId) {
+            const usersRef = collection(db, 'Users');
+            const userQuery = query(usersRef, where('userId', '==', userId));
+            const userSnapshot = await getDocs(userQuery);
+            if (!userSnapshot.empty) {
+              userProfiles[userId] = userSnapshot.docs[0].data();
+            }
+          }
+        }
+        
+        // Map discussions with user data
+        const discussionsData: Discussion[] = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          const userProfile = userProfiles[data.userId] || {};
+          
+          // Calculate time ago
+          const createdAt = data.createdAt?.toDate();
+          const timeAgo = createdAt ? getTimeAgo(createdAt) : 'just now';
+          
+          return {
+            id: doc.id,
+            title: data.title,
+            content: data.content,
+            userId: data.userId,
+            author: userProfile.displayName || userProfile.email || 'Anonymous',
+            authorAvatar: userProfile.profileImageUrl || '',
+            timeAgo,
+            replies: data.replies || 0,
+            likes: data.likes || 0,
+            category: data.category,
+            isPinned: data.isPinned || false,
+            tags: data.tags || [],
+            triggers: data.triggers || [],
+            createdAt: data.createdAt
+          };
+        });
+        
+        setDiscussions(discussionsData);
+      } catch (error) {
+        console.error('Error fetching discussions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDiscussions();
+  }, []);
+
+  // Helper function to calculate time ago
+  const getTimeAgo = (date: Date): string => {
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    
+    const intervals: { [key: string]: number } = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60
+    };
+    
+    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+      const interval = Math.floor(seconds / secondsInUnit);
+      if (interval >= 1) {
+        return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+      }
     }
-  ];
+    
+    return 'just now';
+  };
 
   const categories = ['Uplifty', 'Depression', 'Relationships', 'Recovery', 'Self-Care'];
   const trendingTopics = [
@@ -105,7 +148,10 @@ export default function Forum() {
                 className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-all"
               />
             </div>
-            <button className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold rounded-full px-6 py-3 transition-all duration-300 border border-white/30 shadow-lg flex items-center gap-2 justify-center">
+            <button 
+              onClick={() => navigate('/forum/create')}
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold rounded-full px-6 py-3 transition-all duration-300 border border-white/30 shadow-lg flex items-center gap-2 justify-center"
+            >
               <Plus size={20} />
               New Discussion
             </button>
@@ -169,7 +215,16 @@ export default function Forum() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Discussions */}
           <div className="lg:col-span-2 space-y-4">
-            {discussions.map(discussion => (
+            {loading ? (
+              <div className="text-center text-white/70 py-12">
+                <p>Loading discussions...</p>
+              </div>
+            ) : discussions.length === 0 ? (
+              <div className="text-center text-white/70 py-12">
+                <p>No discussions yet. Be the first to start one!</p>
+              </div>
+            ) : (
+              discussions.map(discussion => (
               <div
                 key={discussion.id}
                 className={`bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10 hover:bg-white/15 transition-all duration-300 cursor-pointer ${discussion.isPinned ? 'border-yellow-500/40' : ''}`}
@@ -187,9 +242,17 @@ export default function Forum() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm">
-                        {discussion.authorAvatar}
-                      </div>
+                      {discussion.authorAvatar ? (
+                        <img 
+                          src={discussion.authorAvatar} 
+                          alt={discussion.author}
+                          className="w-8 h-8 rounded-full object-cover bg-white/20"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm">
+                          👤
+                        </div>
+                      )}
                       <span className="text-white/80 text-sm font-medium">{discussion.author}</span>
                     </div>
                     <span className="text-white/50 text-sm">• {discussion.timeAgo}</span>
@@ -221,11 +284,13 @@ export default function Forum() {
                   View replies →
                 </button>
               </div>
-            ))}
+            )))}
 
-            <button className="w-full bg-white/5 hover:bg-white/10 backdrop-blur-md text-white/70 font-medium rounded-full py-3 transition-all duration-200 border border-white/10">
-              Loading more discussions...
-            </button>
+            {!loading && discussions.length > 0 && (
+              <button className="w-full bg-white/5 hover:bg-white/10 backdrop-blur-md text-white/70 font-medium rounded-full py-3 transition-all duration-200 border border-white/10">
+                Loading more discussions...
+              </button>
+            )}
           </div>
 
           {/* Sidebar */}
