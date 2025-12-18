@@ -24,8 +24,9 @@ function App() {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      // Reduce duration and use linear easing to effectively remove inertia/momentum
+      duration: 0,
+      easing: (t) => t,
     });
 
     function raf(time: number) {
