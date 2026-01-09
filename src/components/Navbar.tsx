@@ -79,14 +79,14 @@ function Navbar() {
     };
 
     return (
-        <nav className="fixed top-4 left-0 right-0 z-50">
+        <nav className="fixed top-2 sm:top-4 left-0 right-0 z-50 px-2 sm:px-0">
             {/* Search Button - Top Left */}
             <button
                 onClick={() => setIsSearchOpen(true)}
-                className="fixed top-4 left-4 z-[60] overflow-hidden bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-3 shadow-2xl text-white/90 hover:text-white transition-all duration-300 hover:bg-white/20 hover:scale-110"
+                className="fixed top-2 sm:top-4 left-2 sm:left-4 z-[60] overflow-hidden bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-2 sm:p-3 shadow-2xl text-white/90 hover:text-white transition-all duration-300 hover:bg-white/20 hover:scale-110"
                 aria-label="Open search"
             >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </button>
@@ -100,9 +100,9 @@ function Navbar() {
             />
 
             {/* Two sections - center navigation and right profile */}
-            <div className="relative flex items-center justify-center px-4 max-w-full">
-                {/* Center: All navigation in one rounded section */}
-                <div className="relative overflow-hidden bg-white/10 backdrop-blur-xl rounded-full px-2 py-1.5 border border-white/20 shadow-2xl">
+            <div className="relative flex items-center justify-center px-2 sm:px-4 max-w-full">
+                {/* Center: All navigation in one rounded section - Hidden on mobile */}
+                <div className="hidden md:flex relative overflow-hidden bg-white/10 backdrop-blur-xl rounded-full px-2 py-1.5 border border-white/20 shadow-2xl">
                     <div
                         className="pointer-events-none absolute inset-[-12px] opacity-60 mix-blend-screen blur-2xl bg-[conic-gradient(at_30%_30%,#ffffff80,#7ed6ff55,#ffffff30,#abc6ff70,#ffffff80)] animate-[spin_18s_linear_infinite]"
                         aria-hidden
@@ -131,11 +131,11 @@ function Navbar() {
                         </Link>
                         
                         {/* Center Logo */}
-                        <Link to="/" className="group px-2">
+                        <Link to="/" className="group px-1 sm:px-2">
                             <img 
                                 src={NimbusLogo} 
                                 alt="Nimbus" 
-                                className="h-9 w-18 transition-transform duration-300 ease-out group-hover:scale-125 drop-shadow-lg"
+                                className="h-8 w-16 sm:h-9 sm:w-18 transition-transform duration-300 ease-out group-hover:scale-125 drop-shadow-lg"
                             />
                         </Link>
                         
@@ -163,8 +163,17 @@ function Navbar() {
                     </div>
                 </div>
 
+                {/* Mobile Logo - Centered on mobile only */}
+                <Link to="/" className="md:hidden absolute left-1/2 -translate-x-1/2">
+                    <img 
+                        src={NimbusLogo} 
+                        alt="Nimbus" 
+                        className="h-8 w-16 drop-shadow-lg"
+                    />
+                </Link>
+
                 {/* Right: Profile/Sign In in rounded section - positioned absolutely */}
-                <div className="hidden md:flex absolute right-4">
+                <div className="hidden md:flex absolute right-2 sm:right-4">
                     <div className="relative overflow-hidden bg-white/10 backdrop-blur-xl rounded-full border border-white/20 shadow-2xl">
                         <div
                             className="pointer-events-none absolute inset-[-12px] opacity-60 mix-blend-screen blur-2xl bg-[conic-gradient(at_30%_30%,#ffffff80,#7ed6ff55,#ffffff30,#abc6ff70,#ffffff80)] animate-[spin_18s_linear_infinite]"
@@ -201,7 +210,7 @@ function Navbar() {
                 </div>
 
                 {/* Mobile menu button */}
-                <div className="md:hidden absolute right-4 relative overflow-hidden bg-white/10 backdrop-blur-xl rounded-full p-2 border border-white/20 shadow-2xl">
+                <div className="md:hidden absolute right-2 sm:right-4 relative overflow-hidden bg-white/10 backdrop-blur-xl rounded-full p-2 border border-white/20 shadow-2xl">
                     <div
                         className="pointer-events-none absolute inset-[-12px] opacity-60 mix-blend-screen blur-2xl bg-[conic-gradient(at_30%_30%,#ffffff80,#7ed6ff55,#ffffff30,#abc6ff70,#ffffff80)] animate-[spin_18s_linear_infinite]"
                         aria-hidden
@@ -232,7 +241,7 @@ function Navbar() {
 
             {/* Profile Dropdown - Outside overflow container */}
             {isProfileOpen && user && (
-                <div className="absolute right-6 top-20 w-48 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden" style={{ zIndex: 1000 }}>
+                <div className="absolute right-2 sm:right-6 top-16 sm:top-20 w-44 sm:w-48 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden" style={{ zIndex: 1000 }}>
                     <Link
                         to="/profile"
                         className="block w-full px-4 py-3 text-white hover:bg-white/10 transition-colors text-center font-semibold border-b border-white/10"
@@ -252,28 +261,35 @@ function Navbar() {
 
             {/* Mobile menu */}
             {isMenuOpen && (
-                <div className="md:hidden mt-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl shadow-black/20">
-                    <div className="px-4 pt-3 pb-3 space-y-1">
+                <div className="md:hidden mt-2 mx-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl shadow-black/20">
+                    <div className="px-3 sm:px-4 pt-3 pb-3 space-y-1">
                         <Link
-                            to="/nimbus"
-                            className={`block px-3 py-2 font-bold rounded-2xl transition-all duration-200 ${location.pathname === '/nimbus' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
+                            to="/blog"
+                            className={`block px-3 py-2 font-bold text-sm sm:text-base rounded-2xl transition-all duration-200 ${location.pathname === '/blog' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
                             onClick={() => setIsMenuOpen(false)}
                         >
-                            Nimbus
+                            Blogs
                         </Link>
                         <Link
                             to="/counseling"
-                            className={`block px-3 py-2 font-bold rounded-2xl transition-all duration-200 ${location.pathname === '/counseling' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
+                            className={`block px-3 py-2 font-bold text-sm sm:text-base rounded-2xl transition-all duration-200 ${location.pathname === '/counseling' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Counseling
                         </Link>
                         <Link
                             to="/forum"
-                            className={`block px-3 py-2 font-bold rounded-2xl transition-all duration-200 ${location.pathname === '/forum' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
+                            className={`block px-3 py-2 font-bold text-sm sm:text-base rounded-2xl transition-all duration-200 ${location.pathname === '/forum' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Forums
+                        </Link>
+                        <Link
+                            to="/resources"
+                            className={`block px-3 py-2 font-bold text-sm sm:text-base rounded-2xl transition-all duration-200 ${location.pathname === '/resources' ? 'text-white bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Resources
                         </Link>
                         {user ? (
                             <>

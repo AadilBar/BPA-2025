@@ -13,8 +13,11 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^5.4.1",
+    "@stripe/stripe-js": "^8.6.1",
     "@types/crypto-js": "^4.2.2",
     "@types/three": "^0.181.0",
+    "axios": "^1.13.2",
     "crypto-js": "^4.2.0",
     "firebase": "^12.6.0",
     "framer-motion": "^12.23.25",
