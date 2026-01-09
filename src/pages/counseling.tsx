@@ -173,29 +173,29 @@ export default function Counseling() {
   }
 
   return (
-    <div className="min-h-screen pt-24 px-4 pb-12" style={{
+    <div className="min-h-screen pt-16 sm:pt-20 md:pt-24 px-2 sm:px-4 pb-8 sm:pb-12" style={{
       background: 'linear-gradient(180deg, #0A0F2A 0%, #6A1E55 45%, #D76F86 75%, #FFA54C 90%)'
     }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-3">Book Your Session</h1>
-          <p className="text-white/70 text-lg">Connect with a compassionate professional who understands</p>
-          <p className="text-white/50 text-sm mt-2">Choose a counselor, find a time that works for you. All sessions are completely confidential and designed to support your mental health journey.</p>
+        <div className="text-center mb-8 sm:mb-10 md:mb-12 px-2">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-2 sm:mb-3">Book Your Session</h1>
+          <p className="text-white/70 text-base sm:text-lg">Connect with a compassionate professional who understands</p>
+          <p className="text-white/50 text-xs sm:text-sm mt-2">Choose a counselor, find a time that works for you. All sessions are completely confidential and designed to support your mental health journey.</p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 mb-8 shadow-2xl shadow-black/20">
-          <div className="flex items-center gap-4 flex-wrap">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-2xl shadow-black/20">
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <Filter size={20} className="text-white/70" />
-              <span className="text-white/70 text-sm font-medium">Specialization:</span>
+              <Filter size={18} className="sm:w-5 sm:h-5 text-white/70" />
+              <span className="text-white/70 text-xs sm:text-sm font-medium">Specialization:</span>
             </div>
             {specializations.map(spec => (
               <button
                 key={spec}
                 onClick={() => setFilterSpecialization(spec)}
-                className={`px-4 py-2 rounded-full font-medium text-sm transition-all duration-200 border ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-medium text-xs sm:text-sm transition-all duration-200 border ${
                   filterSpecialization === spec
                     ? 'bg-white/25 text-white border-white/40 shadow-lg'
                     : 'bg-white/5 text-white/80 border-white/10 hover:bg-white/10'
@@ -207,21 +207,21 @@ export default function Counseling() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Counselors List */}
           <div className="lg:col-span-2 space-y-4">
             {filteredCounselors.length === 0 ? (
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 text-center">
-                <p className="text-white/70">No counselors found for this specialization.</p>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center">
+                <p className="text-white/70 text-sm sm:text-base">No counselors found for this specialization.</p>
               </div>
             ) : (
               filteredCounselors.map(counselor => (
                 <div
                   key={counselor.id}
-                  className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10 hover:bg-white/15 transition-all duration-300"
+                  className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl shadow-black/10 hover:bg-white/15 transition-all duration-300"
                 >
-                  <div className="flex gap-6">
-                    <div className="w-32 h-32 rounded-full overflow-hidden flex-shrink-0 border-4 border-white/20 shadow-lg">
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden flex-shrink-0 border-4 border-white/20 shadow-lg mx-auto sm:mx-0">
                       <img 
                         src={counselor.avatar} 
                         alt={counselor.name}
@@ -234,35 +234,36 @@ export default function Counseling() {
                     </div>
                     
                     <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
+                      <div className="flex flex-col sm:flex-row items-start justify-between mb-2 gap-2">
                         <div>
-                          <h3 className="text-2xl font-bold text-white">{counselor.name}</h3>
-                          <p className="text-white/80 text-sm">{counselor.credentials}</p>
+                          <h3 className="text-xl sm:text-2xl font-bold text-white">{counselor.name}</h3>
+                          <p className="text-white/80 text-xs sm:text-sm">{counselor.credentials}</p>
                         </div>
-                        <div className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full">
-                          <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                          <span className="text-white font-semibold">{counselor.rating.toFixed(1)}</span>
-                          <span className="text-white/60 text-sm">({counselor.reviewCount})</span>
+                        <div className="flex items-center gap-1 bg-white/10 px-2 sm:px-3 py-1 rounded-full">
+                          <Star size={14} className="sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400" />
+                          <span className="text-white font-semibold text-sm">{counselor.rating.toFixed(1)}</span>
+                          <span className="text-white/60 text-xs sm:text-sm">({counselor.reviewCount})</span>
                         </div>
                       </div>
 
-                      <p className="text-white/90 font-semibold mb-2">{counselor.specialization}</p>
-                      <p className="text-white/70 text-sm mb-4 line-clamp-2">{counselor.bio}</p>
+                      <p className="text-white/90 font-semibold mb-2 text-sm sm:text-base">{counselor.specialization}</p>
+                      <p className="text-white/70 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">{counselor.bio}</p>
 
-                      <div className="flex items-center gap-4 text-sm text-white/60 mb-4">
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-white/60 mb-3 sm:mb-4">
                         <div className="flex items-center gap-1">
-                          <Award size={16} />
+                          <Award size={14} className="sm:w-4 sm:h-4" />
                           <span>{counselor.yearsExperience}+ years</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Users size={16} />
-                          <span>Family & Relationship Therapy</span>
+                          <Users size={14} className="sm:w-4 sm:h-4" />
+                          <span className="hidden sm:inline">Family & Relationship Therapy</span>
+                          <span className="sm:hidden">Therapy</span>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-3 sm:mb-4">
                         {counselor.tags.map(tag => (
-                          <span key={tag} className="text-xs bg-white/10 text-white/80 px-3 py-1 rounded-full border border-white/20">
+                          <span key={tag} className="text-[10px] sm:text-xs bg-white/10 text-white/80 px-2 sm:px-3 py-1 rounded-full border border-white/20">
                             {tag}
                           </span>
                         ))}
@@ -273,7 +274,7 @@ export default function Counseling() {
                           setSelectedCounselor(counselor);
                           setShowBookingModal(true);
                         }}
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-6 py-3 rounded-full transition-all duration-200 shadow-lg"
+                        className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full transition-all duration-200 shadow-lg text-sm sm:text-base"
                       >
                         View Profile & Book
                       </button>
@@ -285,27 +286,27 @@ export default function Counseling() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Your Upcoming Appointments */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Calendar size={20} />
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl shadow-black/10">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 flex items-center gap-2">
+                <Calendar size={18} className="sm:w-5 sm:h-5" />
                 Your Appointments
               </h3>
               
               {!userId ? (
-                <p className="text-white/60 text-sm">Please log in to view appointments</p>
+                <p className="text-white/60 text-xs sm:text-sm">Please log in to view appointments</p>
               ) : userAppointments.filter(apt => apt.status === 'scheduled').length === 0 ? (
-                <p className="text-white/60 text-sm">No upcoming appointments</p>
+                <p className="text-white/60 text-xs sm:text-sm">No upcoming appointments</p>
               ) : (
                 <div className="space-y-3">
                   {userAppointments
                     .filter(apt => apt.status === 'scheduled')
                     .slice(0, 3)
                     .map(appointment => (
-                      <div key={appointment.id} className="bg-white/5 rounded-2xl p-4 border border-white/10">
-                        <p className="text-white font-semibold text-sm">{appointment.counselorName}</p>
-                        <p className="text-white/70 text-xs mt-1">
+                      <div key={appointment.id} className="bg-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-white/10">
+                        <p className="text-white font-semibold text-xs sm:text-sm">{appointment.counselorName}</p>
+                        <p className="text-white/70 text-[10px] sm:text-xs mt-1">
                           {new Date(appointment.date).toLocaleDateString('en-US', { 
                             month: 'short', 
                             day: 'numeric',
@@ -314,15 +315,15 @@ export default function Counseling() {
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           {appointment.type === 'online' ? (
-                            <Video size={14} className="text-white/50" />
+                            <Video size={12} className="sm:w-3.5 sm:h-3.5 text-white/50" />
                           ) : (
-                            <MapPin size={14} className="text-white/50" />
+                            <MapPin size={12} className="sm:w-3.5 sm:h-3.5 text-white/50" />
                           )}
-                          <span className="text-white/50 text-xs capitalize">{appointment.type}</span>
+                          <span className="text-white/50 text-[10px] sm:text-xs capitalize">{appointment.type}</span>
                         </div>
                         <button
                           onClick={() => handleCancelAppointment(appointment.id)}
-                          className="text-red-400 hover:text-red-300 text-xs mt-2 transition-colors"
+                          className="text-red-400 hover:text-red-300 text-[10px] sm:text-xs mt-2 transition-colors"
                         >
                           Cancel
                         </button>
@@ -333,25 +334,25 @@ export default function Counseling() {
             </div>
 
             {/* Session Info */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-black/10">
-              <h3 className="text-lg font-bold text-white mb-4">Session Information</h3>
-              <div className="space-y-3 text-sm">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl shadow-black/10">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Session Information</h3>
+              <div className="space-y-3 text-xs sm:text-sm">
                 <div className="flex items-start gap-2">
-                  <Clock size={16} className="text-white/50 mt-0.5 flex-shrink-0" />
+                  <Clock size={14} className="sm:w-4 sm:h-4 text-white/50 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-white/90 font-medium">Duration</p>
                     <p className="text-white/60">50 minutes per session</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Video size={16} className="text-white/50 mt-0.5 flex-shrink-0" />
+                  <Video size={14} className="sm:w-4 sm:h-4 text-white/50 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-white/90 font-medium">Online Sessions</p>
                     <p className="text-white/60">Secure video conferencing</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <MapPin size={16} className="text-white/50 mt-0.5 flex-shrink-0" />
+                  <MapPin size={14} className="sm:w-4 sm:h-4 text-white/50 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-white/90 font-medium">In-Person</p>
                     <p className="text-white/60">Office locations available</p>
@@ -364,65 +365,65 @@ export default function Counseling() {
 
         {/* Booking Modal */}
         {showBookingModal && selectedCounselor && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-[#0A0F2A] border border-white/20 rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-start justify-between mb-6">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50">
+            <div className="bg-[#0A0F2A] border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex items-start justify-between mb-4 sm:mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-1">Book Session</h2>
-                  <p className="text-white/70">{selectedCounselor.name}</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Book Session</h2>
+                  <p className="text-white/70 text-sm sm:text-base">{selectedCounselor.name}</p>
                 </div>
                 <button
                   onClick={() => setShowBookingModal(false)}
-                  className="text-white/70 hover:text-white text-2xl"
+                  className="text-white/70 hover:text-white text-2xl sm:text-3xl leading-none"
                 >
                   ×
                 </button>
               </div>
 
               {/* Session Type */}
-              <div className="mb-6">
-                <label className="block text-white/90 text-sm font-semibold mb-3">Session Type</label>
-                <div className="flex gap-3">
+              <div className="mb-4 sm:mb-6">
+                <label className="block text-white/90 text-xs sm:text-sm font-semibold mb-2 sm:mb-3">Session Type</label>
+                <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedType('online')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 px-2 sm:px-4 rounded-lg sm:rounded-xl font-medium text-xs sm:text-base transition-all ${
                       selectedType === 'online'
                         ? 'bg-white/20 text-white border-2 border-white/40'
                         : 'bg-white/5 text-white/70 border-2 border-white/10 hover:bg-white/10'
                     }`}
                   >
-                    <Video size={18} />
+                    <Video size={16} className="sm:w-[18px] sm:h-[18px]" />
                     Online
                   </button>
                   <button
                     onClick={() => setSelectedType('in-person')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 px-2 sm:px-4 rounded-lg sm:rounded-xl font-medium text-xs sm:text-base transition-all ${
                       selectedType === 'in-person'
                         ? 'bg-white/20 text-white border-2 border-white/40'
                         : 'bg-white/5 text-white/70 border-2 border-white/10 hover:bg-white/10'
                     }`}
                   >
-                    <MapPin size={18} />
+                    <MapPin size={16} className="sm:w-[18px] sm:h-[18px]" />
                     In-Person
                   </button>
                 </div>
               </div>
 
               {/* Date Selection */}
-              <div className="mb-6">
-                <label className="block text-white/90 text-sm font-semibold mb-3">Select Date</label>
-                <div className="flex items-center justify-between mb-4">
-                  <button onClick={prevWeek} className="text-white/70 hover:text-white">
-                    <ChevronLeft size={24} />
+              <div className="mb-4 sm:mb-6">
+                <label className="block text-white/90 text-xs sm:text-sm font-semibold mb-2 sm:mb-3">Select Date</label>
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <button onClick={prevWeek} className="text-white/70 hover:text-white p-1">
+                    <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
                   </button>
-                  <span className="text-white font-semibold">
+                  <span className="text-white font-semibold text-sm sm:text-base">
                     {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   </span>
-                  <button onClick={nextWeek} className="text-white/70 hover:text-white">
-                    <ChevronRight size={24} />
+                  <button onClick={nextWeek} className="text-white/70 hover:text-white p-1">
+                    <ChevronRight size={20} className="sm:w-6 sm:h-6" />
                   </button>
                 </div>
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-1 sm:gap-2">
                   {Array.from({ length: 7 }, (_, i) => {
                     const date = new Date(selectedDate);
                     date.setDate(date.getDate() - date.getDay() + i);
@@ -434,7 +435,7 @@ export default function Counseling() {
                         key={i}
                         onClick={() => !isPast && setSelectedDate(date)}
                         disabled={isPast}
-                        className={`p-3 rounded-xl text-center transition-all ${
+                        className={`p-1.5 sm:p-2 md:p-3 rounded-lg sm:rounded-xl text-center transition-all ${
                           isSelected
                             ? 'bg-white/20 border-2 border-white/40'
                             : isPast
@@ -442,8 +443,8 @@ export default function Counseling() {
                             : 'bg-white/5 hover:bg-white/10 border-2 border-transparent'
                         }`}
                       >
-                        <div className="text-white/60 text-xs">{date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                        <div className="text-white font-semibold">{date.getDate()}</div>
+                        <div className="text-white/60 text-[9px] sm:text-xs">{date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                        <div className="text-white font-semibold text-xs sm:text-sm md:text-base">{date.getDate()}</div>
                       </button>
                     );
                   })}
@@ -451,12 +452,12 @@ export default function Counseling() {
               </div>
 
               {/* Time Selection */}
-              <div className="mb-6">
-                <label className="block text-white/90 text-sm font-semibold mb-3">Select Time</label>
+              <div className="mb-4 sm:mb-6">
+                <label className="block text-white/90 text-xs sm:text-sm font-semibold mb-2 sm:mb-3">Select Time</label>
                 {availableTimes.length === 0 ? (
-                  <p className="text-white/60 text-sm">No available times for this date</p>
+                  <p className="text-white/60 text-xs sm:text-sm">No available times for this date</p>
                 ) : (
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
                     {availableTimes.map(time => {
                       const isBooked = bookedTimes.includes(time);
                       const isSelected = selectedTime === time;
@@ -466,7 +467,7 @@ export default function Counseling() {
                           key={time}
                           onClick={() => !isBooked && setSelectedTime(time)}
                           disabled={isBooked}
-                          className={`py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                          className={`py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium transition-all ${
                             isSelected
                               ? 'bg-white/20 text-white border-2 border-white/40'
                               : isBooked
@@ -483,13 +484,13 @@ export default function Counseling() {
               </div>
 
               {/* Notes */}
-              <div className="mb-6">
-                <label className="block text-white/90 text-sm font-semibold mb-2">Notes (Optional)</label>
+              <div className="mb-4 sm:mb-6">
+                <label className="block text-white/90 text-xs sm:text-sm font-semibold mb-2">Notes (Optional)</label>
                 <textarea
                   value={bookingNotes}
                   onChange={(e) => setBookingNotes(e.target.value)}
                   rows={3}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-all resize-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-all resize-none"
                   placeholder="Any specific topics you'd like to discuss..."
                 />
               </div>
@@ -498,9 +499,9 @@ export default function Counseling() {
               <button
                 onClick={handleBookAppointment}
                 disabled={!selectedTime || !userId}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 rounded-xl transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 sm:py-4 rounded-lg sm:rounded-xl text-sm sm:text-base transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                <Check size={20} />
+                <Check size={18} className="sm:w-5 sm:h-5" />
                 Confirm Booking
               </button>
             </div>

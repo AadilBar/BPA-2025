@@ -210,31 +210,31 @@ function Home() {
                 
                 {/* Title + Content - fades as zoom happens */}
                 <div 
-                    className={`z-10 px-8 md:px-16 lg:px-24 text-center max-w-5xl`}
+                    className={`z-10 px-4 sm:px-8 md:px-16 lg:px-24 text-center max-w-5xl`}
                     style={{
                         opacity: isTransitioning ? 0 : 1,
                         transform: isTransitioning ? 'scale(0.9)' : 'scale(1)',
                         transition: 'all 900ms cubic-bezier(0.4, 0.0, 0.2, 1)'
                     }}
                 >
-                    <h1 className="text-7xl md:text-8xl lg:text-9xl font-black text-white mb-8 leading-tight drop-shadow-2xl tracking-tight">
+                    <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white mb-4 sm:mb-6 md:mb-8 leading-tight drop-shadow-2xl tracking-tight">
                         #RiseAbove
                     </h1>
                     
-                    <p className="text-2xl md:text-3xl lg:text-4xl text-white/95 mb-16 leading-relaxed font-semibold">
+                    <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white/95 mb-8 sm:mb-12 md:mb-16 leading-relaxed font-semibold px-2">
                         Join thousands of others who have overcome their fears
                     </p>
                     
-                    <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-2">
                         <button 
                             onClick={() => navigate('/counseling')}
-                            className="px-10 py-5 bg-white/25 hover:bg-white/35 backdrop-blur-xl text-white font-bold text-lg rounded-full border border-white/40 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg hover:scale-105"
+                            className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-white/25 hover:bg-white/35 backdrop-blur-xl text-white font-bold text-base sm:text-lg rounded-full border border-white/40 shadow-2xl shadow-black/20 transition-all duration-300 drop-shadow-lg hover:scale-105"
                         >
                             Get Support
                         </button>
                         <button 
                             onClick={scrollToContent}
-                            className="px-10 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-semibold text-lg rounded-full border border-white/30 shadow-xl transition-all duration-300 hover:scale-105"
+                            className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-semibold text-base sm:text-lg rounded-full border border-white/30 shadow-xl transition-all duration-300 hover:scale-105"
                         >
                             View The Change
                         </button>
@@ -303,34 +303,34 @@ function Home() {
                 }}
             > 
                 {/* Testimonials Section - Full Width Stories */}
-                <div className="w-full py-24 relative space-y-40">
+                <div className="w-full py-12 sm:py-16 md:py-20 lg:py-24 relative space-y-20 sm:space-y-28 md:space-y-40">
                     {/* Story 1 - Image Left */}
-                    <div className="w-full px-8 md:px-16 lg:px-24">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
+                    <div className="w-full px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center max-w-[1600px] mx-auto">
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 to-blue-500/20 rounded-full blur-3xl"></div>
                                 <img 
                                     src={person1} 
                                     alt="Sarah's Journey" 
-                                    className="relative z-10 w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+                                    className="relative z-10 w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-cover rounded-2xl sm:rounded-3xl shadow-2xl"
                                 />
                             </div>
-                            <div className="relative space-y-6">
+                            <div className="relative space-y-4 sm:space-y-6">
                                 {/* Floating quote decoration */}
-                                <div className="absolute -top-6 -left-6 text-white/10 text-[120px] font-serif leading-none">"</div>
-                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Mike's Journey</h3>
-                                <div className="h-1 w-24 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full mb-6"></div>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <div className="absolute -top-4 sm:-top-6 -left-4 sm:-left-6 text-white/10 text-7xl sm:text-[100px] md:text-[120px] font-serif leading-none">"</div>
+                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 relative z-10">Mike's Journey</h3>
+                                <div className="h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full mb-4 sm:mb-6"></div>
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     For years, I battled with depression that felt like an endless darkness. Some days, getting out of bed seemed impossible. I felt completely alone in my struggle.
                                 </p>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     Finding Nimbus changed everything. The community welcomed me with open arms, and through their support and the professional counseling I found here, I slowly began to see light again.
                                 </p>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     Today, I'm not just surviving—I'm thriving. I've learned to manage my mental health, and I'm passionate about helping others who are going through what I experienced. Recovery is possible.
                                 </p>
-                                <p className="text-white/70 text-lg font-semibold mt-8 italic flex items-center gap-2">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <p className="text-white/70 text-sm sm:text-base md:text-lg font-semibold mt-6 sm:mt-8 italic flex items-center gap-2">
+                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
                                     </svg>
                                     Sarah M., 2 years on her journey
@@ -340,24 +340,24 @@ function Home() {
                     </div>
 
                     {/* Story 2 - Image Right */}
-                    <div className="w-full px-8 md:px-16 lg:px-24">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
-                            <div className="relative order-2 lg:order-1 space-y-6">
+                    <div className="w-full px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center max-w-[1600px] mx-auto">
+                            <div className="relative order-2 lg:order-1 space-y-4 sm:space-y-6">
                                 {/* Floating quote decoration */}
-                                <div className="absolute -top-6 -right-6 text-white/10 text-[120px] font-serif leading-none">"</div>
-                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Sarah's Recovery</h3>
-                                <div className="h-1 w-24 bg-gradient-to-r from-blue-400 to-sky-500 rounded-full mb-6"></div>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <div className="absolute -top-4 sm:-top-6 -right-4 sm:-right-6 text-white/10 text-7xl sm:text-[100px] md:text-[120px] font-serif leading-none">"</div>
+                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 relative z-10">Sarah's Recovery</h3>
+                                <div className="h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-blue-400 to-sky-500 rounded-full mb-4 sm:mb-6"></div>
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     My addiction to substances nearly cost me everything—my family, my career, my life. I hit rock bottom and didn't know if I could ever climb back up.
                                 </p>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     Through Nimbus, I connected with others who understood my pain without judgment. The resources here pointed me toward professional treatment, and the community kept me accountable during my darkest moments.
                                 </p>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     I've been clean for 18 months now. I've rebuilt relationships with my family and found purpose in mentoring others in recovery. Every day is a choice, and Nimbus helps me make the right one.
                                 </p>
-                                <p className="text-white/70 text-lg font-semibold mt-8 italic flex items-center gap-2">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <p className="text-white/70 text-sm sm:text-base md:text-lg font-semibold mt-6 sm:mt-8 italic flex items-center gap-2">
+                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
                                     </svg>
                                     Michael R., 18 months sober
@@ -369,39 +369,39 @@ function Home() {
                                 <img 
                                     src={person2} 
                                     alt="Michael's Recovery" 
-                                    className="relative z-10 w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+                                    className="relative z-10 w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-cover rounded-2xl sm:rounded-3xl shadow-2xl"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* Story 3 - Image Left */}
-                    <div className="w-full px-8 md:px-16 lg:px-24">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-[1600px] mx-auto">
+                    <div className="w-full px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center max-w-[1600px] mx-auto">
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-sky-300/20 to-blue-600/20 rounded-full blur-3xl"></div>
                                 <img 
                                     src={person3} 
                                     alt="Jessica's Transformation" 
-                                    className="relative z-10 w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+                                    className="relative z-10 w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-cover rounded-2xl sm:rounded-3xl shadow-2xl"
                                 />
                             </div>
-                            <div className="relative space-y-6">
+                            <div className="relative space-y-4 sm:space-y-6">
                                 {/* Floating quote decoration */}
-                                <div className="absolute -top-6 -left-6 text-white/10 text-[120px] font-serif leading-none">"</div>
-                                <h3 className="text-4xl font-bold text-white mb-2 relative z-10">Jessica's Transformation</h3>
-                                <div className="h-1 w-24 bg-gradient-to-r from-sky-300 to-blue-600 rounded-full mb-6"></div>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <div className="absolute -top-4 sm:-top-6 -left-4 sm:-left-6 text-white/10 text-7xl sm:text-[100px] md:text-[120px] font-serif leading-none">"</div>
+                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 relative z-10">Jessica's Transformation</h3>
+                                <div className="h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-sky-300 to-blue-600 rounded-full mb-4 sm:mb-6"></div>
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     Anxiety controlled my life for so long. Panic attacks would strike without warning, keeping me isolated and afraid to leave my home. I felt trapped in my own mind.
                                 </p>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     Nimbus gave me the courage to seek help. The forum discussions taught me I wasn't alone, and the professional counselors here gave me tools to manage my anxiety effectively.
                                 </p>
-                                <p className="text-white/95 text-xl leading-relaxed">
+                                <p className="text-white/95 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                                     Now I'm living life on my terms. I travel, I've made new friends, and I even started my own business. The anxiety hasn't disappeared, but I've learned to live alongside it rather than letting it control me.
                                 </p>
-                                <p className="text-white/70 text-lg font-semibold mt-8 italic flex items-center gap-2">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <p className="text-white/70 text-sm sm:text-base md:text-lg font-semibold mt-6 sm:mt-8 italic flex items-center gap-2">
+                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
                                     </svg>
                                     Jessica L., reclaiming her life
@@ -412,13 +412,13 @@ function Home() {
                 </div>
 
                 {/* Combined Discussions & Help Section */}
-                <div className="w-full py-20 px-8 md:px-16 lg:px-24">
-                    <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="w-full py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24">
+                    <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
                         {/* Left: Discussions */}
-                        <div className="space-y-8">
-                            <h2 className="text-5xl font-bold text-white">Latest Discussions</h2>
+                        <div className="space-y-6 sm:space-y-8">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">Latest Discussions</h2>
                             
-                            <div className="space-y-6">
+                            <div className="space-y-4 sm:space-y-6">
                                 <Discussions 
                                     category="Mental Health"
                                     title="How to manage anxiety?"
@@ -450,7 +450,7 @@ function Home() {
 
                             <button 
                                 onClick={() => navigate('/forum')}
-                                className="px-10 py-4 bg-white/15 hover:bg-white/25 backdrop-blur-xl text-white font-bold text-lg rounded-full border border-white/30 shadow-xl transition-all duration-300 hover:scale-105"
+                                className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-white/15 hover:bg-white/25 backdrop-blur-xl text-white font-bold text-base sm:text-lg rounded-full border border-white/30 shadow-xl transition-all duration-300 hover:scale-105"
                             >
                                 View More Discussions
                             </button>
@@ -458,17 +458,17 @@ function Home() {
 
                         {/* Right: Need Help */}
                         <div className="lg:sticky lg:top-24">
-                            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl h-full flex flex-col justify-center items-center text-center space-y-6">
-                                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mb-4">
-                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="bg-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-8 sm:p-10 md:p-12 border border-white/20 shadow-2xl h-full flex flex-col justify-center items-center text-center space-y-4 sm:space-y-6">
+                                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
                                     </svg>
                                 </div>
-                                <h2 className="text-4xl font-bold text-white">Still need more help?</h2>
-                                <p className="text-white/80 text-lg">Connect with a professional counselor who can provide personalized support</p>
+                                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">Still need more help?</h2>
+                                <p className="text-white/80 text-sm sm:text-base md:text-lg">Connect with a professional counselor who can provide personalized support</p>
                                 <button 
                                     onClick={() => navigate('/counseling')}
-                                    className="px-12 py-5 bg-white/20 hover:bg-white/30 backdrop-blur-xl text-white font-bold text-lg rounded-full border border-white/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:scale-105"
+                                    className="px-8 sm:px-10 md:px-12 py-4 sm:py-5 bg-white/20 hover:bg-white/30 backdrop-blur-xl text-white font-bold text-base sm:text-lg rounded-full border border-white/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:scale-105"
                                 >
                                     Book an appointment now
                                 </button>
