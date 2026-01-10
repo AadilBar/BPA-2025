@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { db } from '../firebase/firebase';
+import { collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
 
 interface Article {
     title: string;
@@ -15,10 +17,16 @@ interface Definition {
 }
 
 interface Forum {
+    id: string;
     title: string;
+    content: string;
     category: string;
     replies: number;
+    likes: number;
+    views: number;
     lastActive: string;
+    author: string;
+    authorAvatar: string;
 }
 
 interface Counselor {
@@ -177,34 +185,87 @@ function NimbusSearch({ searchQuery, setSearchQuery, isSearchOpen, setIsSearchOp
                 fetchPubMedArticles();
                 fetchDefinitions();
 
-                // Fetch relevant forums (placeholder for now)
-                const fetchForums = () => {
-                    setTimeout(() => {
-                        const placeholderForums: Forum[] = [
-                            {
-                                title: `Coping with ${searchQuery}`,
-                                category: 'Support Groups',
-                                replies: Math.floor(Math.random() * 100) + 10,
-                                lastActive: '2 hours ago'
-                            },
-                            {
-                                title: `${searchQuery} - Share Your Experience`,
-                                category: 'Discussion',
-                                replies: Math.floor(Math.random() * 50) + 5,
-                                lastActive: '5 hours ago'
-                            },
-                            {
-                                title: `Understanding ${searchQuery}`,
-                                category: 'Education',
-                                replies: Math.floor(Math.random() * 80) + 15,
-                                lastActive: '1 day ago'
-                            }
-                        ];
+                // Fetch relevant forums from Firebase
+                const fetchForums = async () => {
+                    try {
+                        const forumRef = collection(db, 'forum');
+                        const q = query(forumRef, orderBy('createdAt', 'desc'), limit(20));
+                        const querySnapshot = await getDocs(q);
                         
+                        // Map all discussions from Firebase
+                        const allForums: Forum[] = querySnapshot.docs.map(doc => {
+                            const data = doc.data();
+                            const createdAt = data.createdAt?.toDate();
+                            const timeAgo = createdAt ? getTimeAgo(createdAt) : 'just now';
+                            
+                            return {
+                                id: doc.id,
+                                title: data.title || 'Untitled',
+                                content: data.content || '',
+                                category: data.category || 'General',
+                                replies: data.replies || 0,
+                                likes: data.likes || 0,
+                                views: data.views || 0,
+                                lastActive: timeAgo,
+                                author: data.authorDisplayName || 'Anonymous',
+                                authorAvatar: data.authorProfilePic || ''
+                            };
+                        });
+                        
+                        // Filter forums based on search query
+                        const q_lower = searchQuery.toLowerCase();
+                        const relevantForums = allForums.filter(forum => {
+                            const titleMatch = forum.title.toLowerCase().includes(q_lower);
+                            const contentMatch = forum.content.toLowerCase().includes(q_lower);
+                            const categoryMatch = forum.category.toLowerCase().includes(q_lower);
+                            const tags = (querySnapshot.docs.find(doc => doc.id === forum.id)?.data().tags || []) as string[];
+                            const tagsMatch = tags.some((tag: string) => tag.toLowerCase().includes(q_lower));
+                            return titleMatch || contentMatch || categoryMatch || tagsMatch;
+                        });
+                        
+                        // Take top 5 relevant forums, or show all forums if no matches
+                        const forumsToShow = relevantForums.length > 0 
+                            ? relevantForums.slice(0, 5) 
+                            : allForums.slice(0, 5);
+                        
+                        if (forumsToShow.length > 0) {
+                            setTiles(prev => prev.map(t => 
+                                t.id === 4 ? { ...t, loading: false, forums: forumsToShow, content: '' } : t
+                            ));
+                        } else {
+                            setTiles(prev => prev.map(t => 
+                                t.id === 4 ? { ...t, loading: false, forums: [], content: 'No forum discussions found.' } : t
+                            ));
+                        }
+                    } catch (error) {
+                        console.error('Error fetching forums:', error);
                         setTiles(prev => prev.map(t => 
-                            t.id === 4 ? { ...t, loading: false, forums: placeholderForums, content: '' } : t
+                            t.id === 4 ? { ...t, loading: false, forums: [], content: 'Unable to load forum discussions.' } : t
                         ));
-                    }, 1200);
+                    }
+                };
+                
+                // Helper function to calculate time ago (same as forum page)
+                const getTimeAgo = (date: Date): string => {
+                    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+                    
+                    const intervals: { [key: string]: number } = {
+                        year: 31536000,
+                        month: 2592000,
+                        week: 604800,
+                        day: 86400,
+                        hour: 3600,
+                        minute: 60
+                    };
+                    
+                    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                        const interval = Math.floor(seconds / secondsInUnit);
+                        if (interval >= 1) {
+                            return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+                        }
+                    }
+                    
+                    return 'just now';
                 };
                 
                 fetchForums();
@@ -477,13 +538,26 @@ function NimbusSearch({ searchQuery, setSearchQuery, isSearchOpen, setIsSearchOp
                                             ) : tile.forums && tile.forums.length > 0 ? (
                                                 <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-3 animate-in fade-in duration-500 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20">
                                                     {tile.forums.map((forum, idx) => (
-                                                        <div key={idx} className="border-b border-white/10 pb-3 last:border-0 hover:bg-white/5 transition-colors rounded-lg p-2 -m-2">
+                                                        <div 
+                                                            key={idx} 
+                                                            className="border-b border-white/10 pb-3 last:border-0 hover:bg-white/5 transition-colors rounded-lg p-2 -m-2 cursor-pointer"
+                                                            onClick={() => {
+                                                                setIsSearchOpen(false);
+                                                                setSearchQuery('');
+                                                                navigate(`/forum/${forum.id}`);
+                                                            }}
+                                                        >
                                                             <h4 className="text-sm font-semibold text-white leading-tight mb-1">
                                                                 {forum.title}
                                                             </h4>
+                                                            <p className="text-xs text-white/60 mb-2 line-clamp-2">
+                                                                {forum.content}
+                                                            </p>
                                                             <div className="flex items-center gap-3 text-xs text-white/60">
                                                                 <span className="bg-white/10 px-2 py-0.5 rounded-full">{forum.category}</span>
                                                                 <span>{forum.replies} replies</span>
+                                                                <span>•</span>
+                                                                <span>{forum.likes} likes</span>
                                                                 <span>•</span>
                                                                 <span>{forum.lastActive}</span>
                                                             </div>
