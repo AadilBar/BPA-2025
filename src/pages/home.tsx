@@ -333,7 +333,7 @@ function Home() {
                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
                                     </svg>
-                                    Sarah M., 2 years on her journey
+                                    Mike B., 2 years on her journey
                                 </p>
                             </div>
                         </div>
@@ -360,7 +360,7 @@ function Home() {
                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
                                     </svg>
-                                    Michael R., 18 months sober
+                                    Sarah R., 18 months sober
                                 </p>
                             </div>
                             <div className="relative order-1 lg:order-2">
