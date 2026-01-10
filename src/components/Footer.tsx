@@ -11,10 +11,42 @@ export default function Footer() {
             <p className="text-white/60 mt-3 sm:mt-4 max-w-sm text-sm sm:text-base">A safe space for mental health support, connecting you with resources, community, and professional care when you need it most.</p>
 
             <div className="flex items-center gap-3 mt-4 sm:mt-6">
-              <button className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"><Facebook size={14} className="sm:w-4 sm:h-4 text-white/70"/></button>
-              <button className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"><Twitter size={14} className="sm:w-4 sm:h-4 text-white/70"/></button>
-              <button className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"><Instagram size={14} className="sm:w-4 sm:h-4 text-white/70"/></button>
-              <button className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"><Linkedin size={14} className="sm:w-4 sm:h-4 text-white/70"/></button>
+              <a 
+                href="https://www.facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Visit Facebook"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"
+              >
+                <Facebook size={14} className="sm:w-4 sm:h-4 text-white/70"/>
+              </a>
+              <a 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Visit Twitter"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"
+              >
+                <Twitter size={14} className="sm:w-4 sm:h-4 text-white/70"/>
+              </a>
+              <a 
+                href="https://www.instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Visit Instagram"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"
+              >
+                <Instagram size={14} className="sm:w-4 sm:h-4 text-white/70"/>
+              </a>
+              <a 
+                href="https://www.linkedin.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Visit LinkedIn"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/3 flex items-center justify-center hover:bg-white/5 transition"
+              >
+                <Linkedin size={14} className="sm:w-4 sm:h-4 text-white/70"/>
+              </a>
             </div>
           </div>
 
